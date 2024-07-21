@@ -2,7 +2,7 @@
   "name": "animeflex",
   "main": "expo-router/entry",
   "version": "1.0.0",
-  "scheme":"animeflex",
+  "scheme": "animeflex",
   "scripts": {
     "start": "expo start",
     "reset-project": "node ./scripts/reset-project.js",
@@ -28,6 +28,7 @@
     "expo-splash-screen": "~0.27.5",
     "expo-status-bar": "~1.12.1",
     "expo-system-ui": "~3.0.7",
+    "expo-video": "^1.2.3",
     "expo-web-browser": "~13.0.3",
     "nativewind": "4.0.1",
     "react": "18.2.0",

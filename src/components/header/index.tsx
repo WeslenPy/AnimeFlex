@@ -7,8 +7,9 @@ export function Header() {
 
     return (
         <View className='w-full flex flex-row justify-end bg-slate-700 rounded-full mt-2'>
-            <TextInput  className="w-96"
+            <TextInput  className="w-96 text-slate-300 -mx-4 "
                         placeholder="Pesquise aqui..."  
+                        placeholderTextColor="white"
                         onChangeText={onChangeSearch}
                         value={search}></TextInput>
 
