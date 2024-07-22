@@ -2,19 +2,12 @@ import { View,Text,StyleSheet,FlatList } from 'react-native';
 import { useEffect,useState } from 'react';
 import { Card } from '../card';
 import {SessionManager} from "../../api/animetv/session";
+import { AnimeProps } from "../../interfaces/anime";
 
-
-
-export interface PopularProps{
-  id:number;
-  category_name:string;
-  category_image:string;
-
-}
 
 
 export function Slider() {
-    const [recommend,setRecommend] = useState<PopularProps[]>([]);
+    const [recommend,setRecommend] = useState<AnimeProps[]>([]);
 
 
     useEffect(()=>{

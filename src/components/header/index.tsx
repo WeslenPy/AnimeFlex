@@ -1,8 +1,9 @@
-import { View,Pressable,Text,TextInput } from 'react-native';
-import { useState,useEffect } from 'react';
-import {Ionicons, Feather} from "@expo/vector-icons";
+import { View,Pressable,TextInput } from 'react-native';
+import { useState } from 'react';
+import {Ionicons} from "@expo/vector-icons";
+import { HeaderProps } from '@/src/interfaces/components';
 
-export function Header() {
+export function Header({config}:{config:HeaderProps}) {
     const [search,onChangeSearch] = useState(''); 
 
     return (
@@ -10,12 +11,14 @@ export function Header() {
             <TextInput  className="w-96 text-slate-300 -mx-4 "
                         placeholder="Pesquise aqui..."  
                         placeholderTextColor="white"
-                        onChangeText={onChangeSearch}
+                        onChangeText={(text)=>{onChangeSearch(text);config.set(text)}}
+                        onFocus={()=>{config.focused()}}
+                        autoFocus={config.focus}
                         value={search}></TextInput>
 
 
-            <Pressable className='p-2'>
-                <Ionicons name="search" className='mx-2' size={28} color="white"/>
+            <Pressable className='p-2' onPress={()=>{config.focused()}}>
+                <Ionicons name="search" className='mx-2' size={28} color="white" />
             </Pressable>
         </View>
     );

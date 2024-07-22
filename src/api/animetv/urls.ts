@@ -53,7 +53,7 @@ class URLManager extends Query {
         return this.mountURL(this.category+"="+search_category)
     }
 
-    router_cat_id(cat_id:number){
+    router_cat_id(cat_id:any){
         return this.mountURL(this.cat_id+"="+cat_id)
     }
 
@@ -66,7 +66,7 @@ class URLManager extends Query {
     }
 
 
-    router_ep(ep_id: number) {
+    router_ep(ep_id: any) {
         var timing = Math.floor(Math.random() * 33441 + 18384)
         const date = new Date();
         let token_base_time = Math.floor((date.getTime() / 43687) * timing * 127)
