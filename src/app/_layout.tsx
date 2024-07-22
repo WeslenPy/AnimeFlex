@@ -7,7 +7,7 @@ export default function Layout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       <Stack.Screen name="(viewer)" options={{ headerShown: false }} />
       <Stack.Screen name="anime/[id]" options={{ headerShown: false }} />
-      <Stack.Screen name="player/[id]" options={{ headerShown: false }} />
+      <Stack.Screen name="play/[id]" options={{ headerShown: false }} />
     </Stack>
   );
 }

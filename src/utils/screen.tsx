@@ -7,7 +7,7 @@ export default function openScreenAnime(anime_id:string){
 }
 
 export function openScreenPlayer(video_id:string){
-    return router.navigate(`/player/${video_id}`)
+    return router.navigate(`/play/${video_id}`)
 
 }
 

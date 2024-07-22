@@ -1,6 +1,6 @@
 import { View,Pressable,Text, TouchableOpacity, Touchable } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
-import openScreenPlayer from '@/src/utils/screen';
+import {openScreenPlayer} from '@/src/utils/screen';
 import { Feather } from '@expo/vector-icons';
 
 
