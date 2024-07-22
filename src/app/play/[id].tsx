@@ -36,8 +36,6 @@ export default function Player() {
 
 
     useEffect(() => {
-
-     
       async function getURL(id:any){
         let session = new SessionManager()
         let url = session.router_ep(id)

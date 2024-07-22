@@ -3,11 +3,23 @@ import { Header } from "../../components/header/index";
 import { Slider } from "../../components/slider/index";
 import Constants from "expo-constants";
 import { openScreenInfo } from "@/src/utils/screen";
+import { useEffect } from 'react';
+
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const statusBar = Constants.statusBarHeight;
 
 
 export default function Index() {
+
+
+  useEffect(() => {
+    // ScreenOrientation.unlockAsync();
+     
+  },[]);
+
+
+
   return (
     <ScrollView style={{flex:1}} className="bg-black " 
                 showsVerticalScrollIndicator={false} >

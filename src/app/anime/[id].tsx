@@ -6,6 +6,7 @@ import {SessionManager} from "../../api/animetv/session";
 import { EpsodiesProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
 import Constants from "expo-constants";
+import * as ScreenOrientation from 'expo-screen-orientation';
 
 const statusBar = Constants.statusBarHeight;
 
@@ -16,6 +17,7 @@ export default function Anime() {
 
 
   useEffect(()=>{
+  
       async function getEpsodies(){
         let session = new SessionManager()
         let url = session.router_cat_id(id)
@@ -26,6 +28,12 @@ export default function Anime() {
 
       getEpsodies();
   },[])
+
+  useEffect(()=>{
+    ScreenOrientation.unlockAsync();
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL);
+
+  })
 
 
 
