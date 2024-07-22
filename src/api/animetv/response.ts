@@ -17,7 +17,7 @@ class ResponseManager extends ManagerDecrypt {
         })
 
         result[0].urls = urls
-        return result;
+        return result[0];
     }
 
 }

@@ -1,64 +1,52 @@
 
 import { SessionManager } from '@/src/api/animetv/session';
+import { URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
-import { useVideoPlayer, VideoView } from 'expo-video';
+// import { Video, ResizeMode } from 'expo-av';
 import { useEffect, useRef, useState } from 'react';
 import {  View, Button } from 'react-native';
+import response from "../../api/animetv/response";
 
 
 
-async function getURL(id:any){
-    let session = new SessionManager()
-    let url = session.router_ep(id)
-    const data= await session.get(url)
-    return data.urls[0];
-}
 
-export default async function Player() {
-
+export default function Player() {
     const {id} = useLocalSearchParams();
 
-    let url = await getURL(id);
+    const [video,setVideo] = useState<URLProps[]>([]);
 
-    const ref = useRef(null);
-    const [isPlaying, setIsPlaying] = useState(true);
+    const manager = new response.ResponseManager();
 
-    const player = useVideoPlayer(url, player => {
-        player.loop = false;
-        player.play();
-    });
+    useEffect(()=>{
+        async function getVideo(id:any){
+            let session = new SessionManager()
+            let url = session.router_ep(id)
+            let data = await session.get(url)
+            data = manager.parse(data);
 
-    useEffect(() => {
-    const subscription = player.addListener('playingChange', isPlaying => {
-        setIsPlaying(isPlaying);
-    });
+            setVideo(data);
 
-    return () => {
-        subscription.remove();
-    };}, [player]);
+        }
+
+        getVideo(id);
+    },[])
+
+
+    // const videoRef = useRef(null);
+    // const [status, setStatus] = useState({});
+
 
  return (
     <View className='w-full h-full bg-black'>
-        <VideoView
-            ref={ref}
-            player={player}
-            allowsFullscreen
-            allowsPictureInPicture
+         {/* <Video
+            ref={videoRef}
+            source={{uri: video.urls[0]}}
+            useNativeControls={true}
+            resizeMode={ResizeMode.CONTAIN}
+            isLooping={false}
+            onPlaybackStatusUpdate={status => setStatus(() => status)}
         />
-
-        <View >
-            <Button
-            title={isPlaying ? 'Pause' : 'Play'}
-            onPress={() => {
-                if (isPlaying) {player.pause();}
-                else {player.play(); }
-
-                setIsPlaying(!isPlaying);
-            }}
-            />
-        </View>
-
-      
+       */}
     </View>
   );
 }

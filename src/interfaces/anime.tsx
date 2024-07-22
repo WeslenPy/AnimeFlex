@@ -15,8 +15,12 @@ export interface EpsodiesProps{
   
   }
    
-export interface URLProps extends EpsodiesProps{
-    urls:string[]
+export interface URLProps {
+    urls:[]
     sinop:string
+    video_id:string;
+    category_id:string;
+    title:string;
+  
   
   }
