@@ -2,10 +2,12 @@
 import { SessionManager } from '@/src/api/animetv/session';
 import { URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState,useCallback } from 'react';
 import {  View, Button, ActivityIndicator,StyleSheet } from 'react-native';
 import response from "../../api/animetv/response";
-import { Video, ResizeMode, VideoState } from 'expo-av';
+import { Video, ResizeMode, VideoState,VideoFullscreenUpdateEvent,VideoReadyForDisplayEvent } from 'expo-av';
+import * as ScreenOrientation from 'expo-screen-orientation';
+
 
 export default function Player() {
     const {id} = useLocalSearchParams();
@@ -18,6 +20,20 @@ export default function Player() {
 
     const manager = new response.ResponseManager();
 
+
+    const onFullscreenChange = useCallback((event:VideoFullscreenUpdateEvent)=>{
+      console.log(event.fullscreenUpdate)
+      if(event.fullscreenUpdate){
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+      }else{
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+      }
+    },[])
+    
+    const onReadScreenChange = useCallback((event:any)=>{
+        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+    },[])
+
     useEffect(() => {
 
      
@@ -27,7 +43,6 @@ export default function Player() {
         let data = await session.get(url)
         data = manager.parse(data);
 
-        console.log(data)
         setVideoUrl(data);
         setLoading(false)
       }
@@ -47,16 +62,18 @@ export default function Player() {
     <View className='w-full h-full bg-black'>
 
       <Video
-        style={{width:400,height:400}}
+        style={styles.container}
         ref={video}
         source={{
           uri: videoUrl.urls[0],
         }}
+        onLoad={onReadScreenChange}
+        onReadyForDisplay={onReadScreenChange}
         useNativeControls={true}
         shouldPlay={true}
         resizeMode={ResizeMode.CONTAIN}
         isLooping={false}
-        onReadyForDisplay={(item)=>{item.naturalSize.orientation="landscape"}}
+        onFullscreenUpdate={onFullscreenChange}
         
         />
       
@@ -67,6 +84,8 @@ export default function Player() {
 
 const styles = StyleSheet.create({
   container:{
+    ...StyleSheet.absoluteFillObject,
+    elevation:1,
 
   }
 })
