@@ -5,7 +5,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
 import {  View, Button, ActivityIndicator,StyleSheet } from 'react-native';
 import response from "../../api/animetv/response";
-import { Video, ResizeMode, VideoState,VideoFullscreenUpdateEvent,VideoReadyForDisplayEvent } from 'expo-av';
+import { Video, ResizeMode, VideoState,VideoFullscreenUpdateEvent,AVPlaybackStatus } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 
 
@@ -22,8 +22,7 @@ export default function Player() {
 
 
     const onFullscreenChange = useCallback((event:VideoFullscreenUpdateEvent)=>{
-      console.log(event.fullscreenUpdate)
-      if(event.fullscreenUpdate){
+      if(event.fullscreenUpdate == 3){
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
       }else{
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
@@ -32,7 +31,9 @@ export default function Player() {
     
     const onReadScreenChange = useCallback((event:any)=>{
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
-    },[])
+    },[])    
+    
+
 
     useEffect(() => {
 
@@ -53,7 +54,7 @@ export default function Player() {
   if (loading) {
       return (
         <View className='w-full h-full justify-center items-center'>
-          <ActivityIndicator size="large" color="#0000" />
+          <ActivityIndicator size="large" color="orange" />
         </View>
       );
     }
@@ -65,10 +66,9 @@ export default function Player() {
         style={styles.container}
         ref={video}
         source={{
-          uri: videoUrl.urls[0],
+          uri: videoUrl.urls[videoUrl.urls.length - 1],
         }}
         onLoad={onReadScreenChange}
-        onReadyForDisplay={onReadScreenChange}
         useNativeControls={true}
         shouldPlay={true}
         resizeMode={ResizeMode.CONTAIN}
