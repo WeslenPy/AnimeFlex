@@ -20,7 +20,6 @@ export default function Anime() {
         let session = new SessionManager()
         let url = session.router_cat_id(id)
         const data = await session.get(url)
-        console.log(url)
         setEpsodies(data.reverse());
 
       }
@@ -31,7 +30,7 @@ export default function Anime() {
 
 
   return (
-    <View className="bg-black h-full w-full mb-5"  style={{marginTop:statusBar+8}}>
+    <View className="bg-black h-full w-full mb-10"  style={{marginTop:statusBar+8}}>
 
 
       <View className='mt-5'></View>

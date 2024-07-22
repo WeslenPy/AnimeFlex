@@ -9,7 +9,8 @@ npm-debug.*
 *.mobileprovision
 *.orig.*
 web-build/
-
+*idea
+.vscode
 package-lock.json
 
 android

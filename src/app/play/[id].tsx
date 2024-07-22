@@ -5,38 +5,47 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import {  View, Button } from 'react-native';
 import response from "../../api/animetv/response";
+import { Video, ResizeMode } from 'expo-av';
 
-import Video, {VideoRef} from 'react-native-video';
-
-export default function Player() {
+export default async function Player() {
     const {id} = useLocalSearchParams();
-    const videoRef = useRef<VideoRef>(null);
+
+    const video = useRef(null);
+    const [status, setStatus] = useState({});
+
+    let url_anime = "";
 
     const manager = new response.ResponseManager();
 
-   //      async function getVideo(id:any){
-   //          let session = new SessionManager()
-   //          let url = session.router_ep(id)
-   //          let data = await session.get(url)
-   //          data = manager.parse(data);
+    async function getVideo(id:any){
+      let session = new SessionManager()
+      let url = session.router_ep(id)
+      let data = await session.get(url)
+      data = manager.parse(data);
 
-   //          setVideo(data);
+      url_anime = data.urls[0]
+        
 
-   //      }
+    }
 
-   //      getVideo(id);
+    await getVideo(id);
 
 
 
  return (
     <View className='w-full h-full bg-black'>
-         <Video
-            className='w-80 h-44 bg-slate-300'
-            ref={videoRef}
-            resizeMode="contain"
-            source={{uri: 'https://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4',}}
-            controls={true}
-        />
+      <Video
+      style={{width:400,height:400,backgroundColor:"red"}}
+        ref={video}
+        source={{
+          uri: url_anime,
+        }}
+        useNativeControls
+        shouldPlay
+        resizeMode={ResizeMode.CONTAIN}
+        isLooping
+        onPlaybackStatusUpdate={setStatus}
+      />
       
     </View>
   );
