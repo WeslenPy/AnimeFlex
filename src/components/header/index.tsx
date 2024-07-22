@@ -7,8 +7,8 @@ export function Header({config}:{config:HeaderProps}) {
     const [search,onChangeSearch] = useState(''); 
 
     return (
-        <View className='w-full flex flex-row justify-end bg-slate-700 rounded-full mt-2'>
-            <TextInput  className="w-96 text-slate-300 -mx-4 "
+        <View className='w-full flex flex-row justify-between bg-slate-700 rounded-full mt-2'>
+            <TextInput  className="w-80 text-slate-300 ml-4"
                         placeholder="Pesquise aqui..."  
                         placeholderTextColor="white"
                         onChangeText={(text)=>{onChangeSearch(text);config.set(text)}}
@@ -16,9 +16,8 @@ export function Header({config}:{config:HeaderProps}) {
                         autoFocus={config.focus}
                         value={search}></TextInput>
 
-
-            <Pressable className='p-2' onPress={()=>{config.focused()}}>
-                <Ionicons name="search" className='mx-2' size={28} color="white" />
+            <Pressable className='p-2 ' onPress={()=>{config.focused()}}>
+                <Ionicons name="search"  size={28} color="white" />
             </Pressable>
         </View>
     );

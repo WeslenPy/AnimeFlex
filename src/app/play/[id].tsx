@@ -3,50 +3,70 @@ import { SessionManager } from '@/src/api/animetv/session';
 import { URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import {  View, Button } from 'react-native';
+import {  View, Button, ActivityIndicator,StyleSheet } from 'react-native';
 import response from "../../api/animetv/response";
-import { Video, ResizeMode } from 'expo-av';
+import { Video, ResizeMode, VideoState } from 'expo-av';
 
-export default async function Player() {
+export default function Player() {
     const {id} = useLocalSearchParams();
 
-    const video = useRef(null);
-    const [status, setStatus] = useState({});
 
-    let url_anime = "";
+    const [videoUrl, setVideoUrl] = useState<URLProps>();
+    const [loading, setLoading] = useState(true);
+
+    const video = useRef<VideoState>();
 
     const manager = new response.ResponseManager();
 
-    async function getVideo(id:any){
-      let session = new SessionManager()
-      let url = session.router_ep(id)
-      let data = await session.get(url)
-      data = manager.parse(data);
+    useEffect(() => {
 
-      url_anime = data.urls[0]
-        
+     
+      async function getURL(id:any){
+        let session = new SessionManager()
+        let url = session.router_ep(id)
+        let data = await session.get(url)
+        data = manager.parse(data);
 
+        console.log(data)
+        setVideoUrl(data);
+        setLoading(false)
+      }
+  
+      getURL(id);
+    },[]);
+
+  if (loading) {
+      return (
+        <View className='w-full h-full justify-center items-center'>
+          <ActivityIndicator size="large" color="#0000" />
+        </View>
+      );
     }
-
-    await getVideo(id);
-
-
 
  return (
     <View className='w-full h-full bg-black'>
+
       <Video
-      style={{width:400,height:400,backgroundColor:"red"}}
+        style={{width:400,height:400}}
         ref={video}
         source={{
-          uri: url_anime,
+          uri: videoUrl.urls[0],
         }}
-        useNativeControls
-        shouldPlay
+        useNativeControls={true}
+        shouldPlay={true}
         resizeMode={ResizeMode.CONTAIN}
-        isLooping
-        onPlaybackStatusUpdate={setStatus}
-      />
+        isLooping={false}
+        onReadyForDisplay={(item)=>{item.naturalSize.orientation="landscape"}}
+        
+        />
       
     </View>
   );
 }
+
+
+const styles = StyleSheet.create({
+  container:{
+
+  }
+})
