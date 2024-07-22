@@ -4,7 +4,13 @@ import { Card } from '../card';
 import {SessionManager} from "../../api/animetv/session";
 import { AnimeProps } from "../../interfaces/anime";
 
-
+function shuffleArray(array:[]) {
+  for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+  }
+  return array;
+}
 
 export function Slider() {
     const [recommend,setRecommend] = useState<AnimeProps[]>([]);
@@ -14,7 +20,8 @@ export function Slider() {
         async function getRecommend(){
           let session = new SessionManager()
           let url = session.router_popular()
-          const data = await session.get(url)
+          let data = await session.get(url)
+          data = shuffleArray(data.slice());
           console.log(url)
           setRecommend(data);
 
