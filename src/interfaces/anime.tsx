@@ -3,6 +3,14 @@ export interface AnimeProps{
     id:string;
     category_name:string;
     category_image:string;
+    title:string
+  
+  }
+  
+export interface CategoryProps{
+    icon:React.JSX.Element;
+    name:string;
+    category:string
   
   }
   

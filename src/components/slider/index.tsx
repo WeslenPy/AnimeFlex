@@ -3,6 +3,8 @@ import { useEffect,useState } from 'react';
 import { Card } from '../card';
 import {SessionManager} from "../../api/animetv/session";
 import { AnimeProps } from "../../interfaces/anime";
+import Flat from '../flat';
+
 
 function shuffleArray(array:[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -14,16 +16,32 @@ function shuffleArray(array:[]) {
 
 export function Slider() {
     const [recommend,setRecommend] = useState<AnimeProps[]>([]);
+    const [populares,setPopulares] = useState<AnimeProps[]>([]);
+    const [romance,setRomance] = useState<AnimeProps[]>([]);
 
+    const session = new SessionManager()
 
     useEffect(()=>{
+
+      async function getData(url:string){
+        let data = await session.get(url)
+        return shuffleArray(data.slice());
+
+      }
+
+
         async function getRecommend(){
-          let session = new SessionManager()
-          let url = session.router_popular()
-          let data = await session.get(url)
-          data = shuffleArray(data.slice());
-          console.log(url)
-          setRecommend(data);
+          let url_recommend = session.router_latest()
+          let url_popular = session.router_popular()
+          let url_romance = session.router_category("ROMANCE")
+
+          let data_popular = await getData(url_popular)
+          let data_recommend = await getData(url_recommend)
+          let data_romance = await getData(url_romance)
+
+          setPopulares(data_popular);
+          setRecommend(data_recommend);
+          setRomance(data_romance);
 
         }
 
@@ -32,12 +50,15 @@ export function Slider() {
 
 
  return (
-    <View className='w-full mt-4 m-4  '>
-        <View className='text-xl mb-5 mt-5'><Text className='text-slate-100'>RECOMENDAÇÕES PARA VOCÊ</Text></View>
+    <View className='w-full mt-4 m-4  mb-5'>
+        <Flat config={{title:"RECOMENDAÇÕES PARA VOCÊ",variavel:recommend}}></Flat>
+        <Flat config={{title:"ANIMES POPULARES",variavel:populares}}></Flat>
+        <Flat config={{title:"ANIMES SOBRE ROMANCE",variavel:romance}}></Flat>
 
-        <FlatList contentContainerStyle={{gap:16}} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} horizontal={true} data={recommend} renderItem={({item})=><Card anime={item}></Card>}/>
-
-
+        <View className='w-full justify-center items-center mt-5 mb-5'>
+          <Text className='text-gray-50'>Você chegou ao fim da lista.</Text>
+        </View>
+   
     </View>
   );
 }

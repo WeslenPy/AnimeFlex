@@ -7,3 +7,8 @@ export interface HeaderProps{
     set:Function
     focused:Function
 }
+
+export interface FlatProps{
+    title:string
+    variavel:any
+}

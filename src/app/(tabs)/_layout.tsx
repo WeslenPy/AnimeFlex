@@ -1,16 +1,7 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
-import * as ScreenOrientation from 'expo-screen-orientation';
-import { useEffect } from 'react';
 
 export default function RootLayout() {
-
-
-  
-
- 
-
-
 
   const config = {
     headerTintColor:"#24252A",
@@ -33,7 +24,7 @@ export default function RootLayout() {
 
 
   return (
-    <Tabs screenOptions={{}} >
+    <Tabs screenOptions={{tabBarActiveBackgroundColor:config.headerTintColor,tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor}} >
       <Tabs.Screen name="index" 
       
             options={{
