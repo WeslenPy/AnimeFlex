@@ -33,7 +33,6 @@ class URLManager extends Query {
     
     router_image(source:string){
         let image = `${this.image}/${source}`;
-        console.log(image)
         return image;
     }
 

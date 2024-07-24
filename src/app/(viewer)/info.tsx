@@ -41,7 +41,8 @@ export default function Info() {
 
       </View>
       
-      <FlatList  contentContainerStyle={{gap:16,flex:1,backgroundColor:"#0000"}} showsHorizontalScrollIndicator={false} showsVerticalScrollIndicator={false} horizontal={false} data={search} renderItem={({item})=><Box anime={item}></Box>}/>
+      <FlatList  contentContainerStyle={{gap:16,flex:1,backgroundColor:"#0000"}} showsHorizontalScrollIndicator={false} 
+      showsVerticalScrollIndicator={false} horizontal={false} data={search} renderItem={({item})=><Box anime={item}></Box>}/>
 
 
     </View>

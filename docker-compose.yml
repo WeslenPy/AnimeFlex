@@ -1,0 +1,13 @@
+version: '2'
+
+
+services:
+  build-optimizer:
+    restart: no
+    build: 
+      context: ./
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./:/home/src/app
+    stdin_open: true
+    tty: true

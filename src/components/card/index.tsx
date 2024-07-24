@@ -1,15 +1,15 @@
 import { View,Pressable,Text,Image } from 'react-native';
 import manager from "../../api/animetv/urls";
 import { AnimeProps } from "../../interfaces/anime";
-import openScreenAnime from '@/src/utils/screen';
+import openScreenAnime, { openScreenPlayer } from '@/src/utils/screen';
 
 
 export function Card({anime}:{anime:AnimeProps}) {
 
     let url = new manager.URLManager()
-
+    console.log(anime)
     return (
-       <Pressable className='flex flex-col items-center'  onPress={() => {openScreenAnime(anime.id);}}>
+       <Pressable className='flex flex-col items-center'  onPress={() => {anime.id?openScreenAnime(anime.id):openScreenPlayer(anime.video_id)}}>
             <View className='bg-slate-400 rounded-md'>
                 <Image className='w-44 h-80 rounded-md' progressiveRenderingEnabled={true}  source={{uri:url.router_image(anime.category_image)}} />
             </View>

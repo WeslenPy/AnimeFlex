@@ -3,7 +3,7 @@
     "name": "animeflex",
     "slug": "animeflex",
     "version": "1.0.0",
-    "orientation": "ALL",
+    "orientation": "default",
     "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
@@ -52,6 +52,16 @@
       "eas": {
         "projectId": "7e6aa73d-954a-4a48-9d20-89078619eb50"
       }
-    }
+    },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/7e6aa73d-954a-4a48-9d20-89078619eb50",
+      "requestHeaders": {
+        "expo-channel-name": "main"
+        }
+    },
+    "owner": "weslenpy"
   }
 }

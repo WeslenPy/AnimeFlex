@@ -4,7 +4,7 @@ import { CategoryProps } from '@/src/interfaces/anime';
 
 export default function CategoryCard({category}:{category:CategoryProps}) {
  return (
-    <View className='columns-6'>
+    <View className='w-full'>
         <Pressable className='bg-slate-400 rounded-md m-4' onPress={()=>{}}>
             <View className='justify-center items-center p-2'>
 

@@ -1,10 +1,8 @@
-import { View,Text,StyleSheet,FlatList } from 'react-native';
+import { View,Text} from 'react-native';
 import { useEffect,useState } from 'react';
-import { Card } from '../card';
 import {SessionManager} from "../../api/animetv/session";
 import { AnimeProps } from "../../interfaces/anime";
 import Flat from '../flat';
-
 
 function shuffleArray(array:[]) {
   for (let i = array.length - 1; i > 0; i--) {
@@ -15,6 +13,10 @@ function shuffleArray(array:[]) {
 }
 
 export function Slider() {
+
+
+
+
     const [recommend,setRecommend] = useState<AnimeProps[]>([]);
     const [populares,setPopulares] = useState<AnimeProps[]>([]);
     const [romance,setRomance] = useState<AnimeProps[]>([]);
@@ -51,7 +53,7 @@ export function Slider() {
 
  return (
     <View className='w-full mt-4 m-4  mb-5'>
-        <Flat config={{title:"RECOMENDAÇÕES PARA VOCÊ",variavel:recommend}}></Flat>
+        <Flat config={{title:"NOVOS EPISODIOS",variavel:recommend}}></Flat>
         <Flat config={{title:"ANIMES POPULARES",variavel:populares}}></Flat>
         <Flat config={{title:"ANIMES SOBRE ROMANCE",variavel:romance}}></Flat>
 

@@ -17,16 +17,20 @@ export default function Anime() {
 
 
   useEffect(()=>{
-  
+    try{
       async function getEpsodies(){
         let session = new SessionManager()
         let url = session.router_cat_id(id)
         const data = await session.get(url)
         setEpsodies(data.reverse());
-
+  
       }
-
+  
       getEpsodies();
+
+    }catch(erro){
+    }
+  
   },[])
 
   useEffect(()=>{
@@ -38,13 +42,16 @@ export default function Anime() {
 
 
   return (
-    <View className="bg-black h-full w-full mb-10"  style={{marginTop:statusBar+8}}>
+    <View className="bg-black w-full "  style={{marginTop:statusBar+8}}>
 
 
       <View className='mt-5'></View>
 
-      <FlatList  contentContainerStyle={{gap:16,backgroundColor:"#0000",marginLeft:10,marginRight:10}} showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} data={epsodies} renderItem={({item})=><Epsodie ep={item}></Epsodie>}/>
+      <FlatList  contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10}} 
+                  showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
+                  data={epsodies} renderItem={({item})=><Epsodie ep={item}></Epsodie>}/>
 
+      <View className='mt-5 mb-5 h-24'></View>
 
     </View>
 

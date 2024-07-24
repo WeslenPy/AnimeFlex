@@ -1,16 +1,26 @@
 {
   "cli": {
-    "version": ">= 10.2.1"
+    "version": ">= 3.17.1"
   },
   "build": {
     "development": {
+      "env":{"EAS_BUILD_DISABLE_NPM_CACHE":"1"},
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "channel": "development"
     },
     "preview": {
-      "distribution": "internal"
+      "env":{
+        "EAS_BUILD_DISABLE_NPM_CACHE":"1",
+        "ANDROID_SDK_ROOT":"/usr/local/android-sdk-linux"},
+
+      "android":{
+        "buildType":"apk"
+      }
     },
-    "production": {}
+    "production": {
+      "env":{"EAS_BUILD_DISABLE_NPM_CACHE":"1"}
+    }
   },
   "submit": {
     "production": {}
