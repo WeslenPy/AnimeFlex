@@ -1,4 +1,4 @@
-import { View,Pressable,Text,Image,ActivityIndicator } from 'react-native';
+import { View,Pressable,Text,Image,ActivityIndicator,StyleSheet } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
 import {openScreenPlayer} from '@/src/utils/screen';
 import { Feather } from '@expo/vector-icons';
@@ -28,7 +28,7 @@ export default function Epsodie({ep}:{ep:EpsodiesProps}) {
       },[]);
   
     return (
-        <Pressable className='w-full flex flex-row  bg-slate-600 rounded-md items-center justify-start'  onPress={() => {openScreenPlayer(ep.video_id);}}>
+        <Pressable className='w-full flex flex-row rounded-md items-center justify-start' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id);}}>
             <View className='flex-col mr-2 p-1'>
                 <View className='h-32 w-32 bg-slate-400 rounded-md relative'>
                     <View className=''>
@@ -49,3 +49,10 @@ export default function Epsodie({ep}:{ep:EpsodiesProps}) {
        </Pressable>
   );
 }
+
+
+const styles = StyleSheet.create({
+    color:{
+        backgroundColor:"#222B32"
+    }
+})

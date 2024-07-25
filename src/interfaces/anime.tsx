@@ -23,6 +23,19 @@ export interface EpsodiesProps{
     title:string;
   
   }
+     
+
+export interface InfoProps{
+    category_description:string;
+    category_name:string;
+    category_image:string;
+    category_genres:string;
+    count:string;
+    ano:string;
+    off:string;
+    id:string;
+  
+  }
    
 export interface URLProps {
     urls:[]

@@ -36,8 +36,8 @@ class URLManager extends Query {
         return image;
     }
 
-    router_info() {
-        return this.mountURL(this.info)
+    router_info(id:any) {
+        return this.mountURL(this.info+"="+id)
     }
 
     router_latest(){
