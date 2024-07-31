@@ -1,14 +1,13 @@
 import { Text, View,FlatList,ScrollView } from "react-native";
 import { useEffect,useState } from 'react';
 
-import Constants from "expo-constants";
 import { Header } from "@/src/components/header";
 import Box from "@/src/components/box";
 import { AnimeProps } from "@/src/interfaces/anime";
 import {SessionManager} from "../../api/animetv/session";
 
-const statusBar = Constants.statusBarHeight;
 
+import StatusBar from "@/src/components/header/statusbar";
 
 export default function Info() {
 
@@ -33,9 +32,9 @@ export default function Info() {
 
   return (
     <View className="bg-black h-full">
+      <StatusBar></StatusBar>
 
-      <View  className="w-full p-4"
-            style={{marginTop:statusBar+8}}>
+      <View  className="w-full p-4">
           
         <Header config={{focus:true,set:getSearch,focused:()=>{}}}></Header>
 

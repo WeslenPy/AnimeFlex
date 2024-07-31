@@ -5,12 +5,11 @@ import {useLocalSearchParams } from 'expo-router';
 import {SessionManager} from "../../api/animetv/session";
 import { EpsodiesProps, InfoProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
-import Constants from "expo-constants";
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather } from '@expo/vector-icons';
 import { openScreenPlayer } from '@/src/utils/screen';
+import StatusBar from "@/src/components/header/statusbar";
 
-const statusBar = Constants.statusBarHeight;
 
 export default function Anime() {
   const {id} = useLocalSearchParams();
@@ -51,8 +50,8 @@ export default function Anime() {
 
 
   return (
-    <View className="bg-black w-full relative h-full mb-10"  style={{marginTop:statusBar+8}}>
-
+    <View className="bg-black w-full relative h-full mb-10"  >
+      <StatusBar></StatusBar>
       
 
       <View className='mt-5 text-white p-5'>
@@ -84,8 +83,8 @@ export default function Anime() {
 
         
       <View className='absolute bottom-10 left-0 right-0 z-50'>
-        <View className='justify-between items-center p-3'>
-          <Pressable className='w-full bg-orange-400 rounded-md p-4' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id):null;}}>
+        <View className='justify-between items-center p-5 mb-4'>
+          <Pressable className='w-full bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id):null;}}>
             <View className='flex-row justify-center items-center align-middle'>
               <Feather name="play" size={30} color="black" />
               <Text className='text-xl font-bold'>COMEÇAR A ASSISTIR E1</Text>
