@@ -50,7 +50,7 @@ export default function Anime() {
 
 
   return (
-    <View className="bg-black w-full relative h-full mb-10"  >
+    <View className="bg-black w-full relative h-full"  >
       <StatusBar></StatusBar>
       
 
@@ -59,7 +59,7 @@ export default function Anime() {
           <View className='flex flex-col'>
             <Text className='text-white text-3xl mb-2'>{info.category_name}</Text>
             <Text className='text-white mb-2'>•<Text className='text-green-600'> Série </Text>• | Ano {info.ano} </Text>
-            <ScrollView className='h-32'>
+            <ScrollView className='h-24'>
               <Text className='text-white text-xl mb-4'>{info.category_description}</Text>
 
             </ScrollView>
@@ -73,7 +73,7 @@ export default function Anime() {
       </View>
 
       
-      <View className='mb-96'>
+      <View style={{marginBottom:345}}>
           <FlatList  contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10}} 
                         showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
                         data={epsodies} renderItem={({item})=><Epsodie ep={item}></Epsodie>}/>
@@ -82,7 +82,7 @@ export default function Anime() {
       </View>
 
         
-      <View className='absolute bottom-10 left-0 right-0 z-50'>
+      <View className='absolute bottom-5 left-0 right-0 z-50'>
         <View className='justify-between items-center p-5 mb-4'>
           <Pressable className='w-full bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id):null;}}>
             <View className='flex-row justify-center items-center align-middle'>

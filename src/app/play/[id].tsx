@@ -200,7 +200,11 @@ export default function Player() {
               </View>
                 <View className=' w-full p-4 bottom-28 flex-row '>
                   <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
-                  <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} style={{flex:1}} onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
+
+                  <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
+                        style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red'
+                        onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
+
                   <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
                   
                 </View>
