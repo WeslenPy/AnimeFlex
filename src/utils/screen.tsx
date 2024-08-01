@@ -1,14 +1,14 @@
-import { router } from "expo-router";
+import { useRouter,router } from "expo-router";
 
 
-export default function openScreenAnime(anime_id:string){
+export default function openScreenAnime(anime_id:any){
 
     return router.navigate(`/anime/${anime_id}`)
 
 }
 
-export function openScreenPlayer(video_id:string){
-    return router.navigate(`/play/${video_id}`)
+export function openScreenPlayer(video_id:string,current_index:string,page:any){
+    return router.push(`/play/${video_id}?current=${current_index}&back_id=${page}`)
 
 }
 

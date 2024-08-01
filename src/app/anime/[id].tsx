@@ -7,7 +7,7 @@ import { EpsodiesProps, InfoProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather } from '@expo/vector-icons';
-import { openScreenPlayer } from '@/src/utils/screen';
+import { openScreenPlayer, }  from '@/src/utils/screen';
 import StatusBar from "@/src/components/header/statusbar";
 
 
@@ -24,7 +24,7 @@ export default function Anime() {
     extrapolate:"clamp",
   })
 
-  const {id} = useLocalSearchParams();
+  const {id} = useLocalSearchParams<{id:string}>();
 
   const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
   const [info,setInfo] = useState<InfoProps>();
@@ -40,10 +40,19 @@ export default function Anime() {
         let url_info = session.router_info(id)
 
 
-        const data_cat = await session.get(url_cat)
+        let data_cat:EpsodiesProps[] = await session.get(url_cat)
         const data_info = await session.get(url_info)
 
-        setEpsodies(data_cat.reverse());
+        data_cat  = data_cat.reverse()
+
+        data_cat.forEach((item:EpsodiesProps,index:number)=>{
+            data_cat[index].index_id=index
+            data_cat[index].index_id=index
+        })
+
+
+
+        setEpsodies(data_cat);
         setInfo(data_info[0]);
   
       }
@@ -99,7 +108,7 @@ export default function Anime() {
                           },
                         ],{useNativeDriver:false}
                         )}
-                        renderItem={({item})=><Epsodie ep={item}></Epsodie>}/>
+                        renderItem={({item})=><Epsodie ep={item} page={id}></Epsodie>}/>
 
 
       </View>
@@ -107,7 +116,7 @@ export default function Anime() {
         
       <View className='absolute bottom-0 left-0 right-0 z-50'>
         <View className='justify-between items-center p-5'>
-          <Pressable className='w-full bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id):null;}}>
+          <Pressable className='w-full bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id,epsodies[0].index_id.toString(),id):null;}}>
             <View className='flex-row justify-center items-center align-middle'>
               <Feather name="play" size={30} color="black" />
               <Text className='text-xl font-bold'>COMEÇAR A ASSISTIR E1</Text>

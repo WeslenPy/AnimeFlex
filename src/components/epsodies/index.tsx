@@ -8,7 +8,7 @@ import { SessionManager } from '@/src/api/animetv/session';
 import response from "../../api/animetv/response";
 
 
-export default function Epsodie({ep}:{ep:EpsodiesProps}) {
+export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
     const [image, setImage] = useState("");
     const manager = new response.ResponseManager();
@@ -23,12 +23,12 @@ export default function Epsodie({ep}:{ep:EpsodiesProps}) {
           const { uri } = await VideoThumbnails.getThumbnailAsync(data.urls[data.urls.length - 1], {time: 15000});
           setImage(uri);
         }
-    
+
         getURL(ep.video_id);
       },[]);
   
     return (
-        <Pressable className='w-full flex flex-row rounded-md items-center justify-start' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id);}}>
+        <Pressable className='w-full flex flex-row rounded-md items-center justify-start' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page);}}>
             <View className='flex-col mr-2 p-1'>
                 <View className='h-32 w-32 bg-slate-400 rounded-md relative'>
                     <View className=''>

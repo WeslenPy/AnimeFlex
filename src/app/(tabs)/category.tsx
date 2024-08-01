@@ -7,8 +7,8 @@ import { openScreenInfo } from "@/src/utils/screen";
 export default function CategoryAnime() {
   const categorys:any[] = []
 
-  data_category.forEach(category=>{
-    categorys.push(<CategoryCard category={category}></CategoryCard>)
+  data_category.forEach((category,index)=>{
+    categorys.push(<CategoryCard  key={index} category={category}></CategoryCard>)
   })
   
  return (
@@ -16,7 +16,7 @@ export default function CategoryAnime() {
     <View className='w-full h-full bg-black ' >
       <Header config={{focus:false,set:()=>{},focused:openScreenInfo}}/>
 
-      <ScrollView className=' mb-10 mt-5'> 
+      <ScrollView className=' mt-5'> 
           <View className='flex flex-row flex-wrap justify-center items-center gap-5 mb-10'>
               {categorys}
           </View>

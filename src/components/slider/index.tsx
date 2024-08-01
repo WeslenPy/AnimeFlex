@@ -14,9 +14,6 @@ function shuffleArray(array:[]) {
 
 export function Slider() {
 
-
-
-
     const [recommend,setRecommend] = useState<AnimeProps[]>([]);
     const [populares,setPopulares] = useState<AnimeProps[]>([]);
     const [romance,setRomance] = useState<AnimeProps[]>([]);
@@ -31,23 +28,24 @@ export function Slider() {
 
       }
 
+      async function getRecommend(){
+        let url_recommend = session.router_latest()
+        let url_popular = session.router_popular()
+        let url_romance = session.router_category("ROMANCE")
 
-        async function getRecommend(){
-          let url_recommend = session.router_latest()
-          let url_popular = session.router_popular()
-          let url_romance = session.router_category("ROMANCE")
+        let data_popular = await getData(url_popular)
+        let data_recommend = await getData(url_recommend)
+        let data_romance = await getData(url_romance)
 
-          let data_popular = await getData(url_popular)
-          let data_recommend = await getData(url_recommend)
-          let data_romance = await getData(url_romance)
+        setPopulares(data_popular);
+        setRecommend(data_recommend);
+        setRomance(data_romance);
 
-          setPopulares(data_popular);
-          setRecommend(data_recommend);
-          setRomance(data_romance);
+      }
 
-        }
+      getRecommend();
 
-        getRecommend();
+
     },[])
 
 

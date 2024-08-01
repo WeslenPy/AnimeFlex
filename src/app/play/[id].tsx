@@ -1,7 +1,7 @@
 
 import { SessionManager } from '@/src/api/animetv/session';
-import { URLProps } from '@/src/interfaces/anime';
-import { useLocalSearchParams } from 'expo-router';
+import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
+import { useLocalSearchParams,useGlobalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
 import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated} from 'react-native';
 import response from "../../api/animetv/response";
@@ -16,13 +16,23 @@ import Slider from '@react-native-community/slider';
 import { useKeepAwake,deactivateKeepAwake } from 'expo-keep-awake';
 import {StatusBar} from 'expo-status-bar';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
-
+import { openScreenPlayer } from '@/src/utils/screen';
+import openScreenAnime from '@/src/utils/screen';
 
 export default function Player() {
     useKeepAwake();
-    const {id} = useLocalSearchParams();
+    const {id,current, back_id}= useLocalSearchParams<{ id: string,current: string,back_id:string}>();
 
 
+    const [videoUrl, setVideoUrl] = useState<URLProps>();
+    const nextEp = useRef<EpsodiesProps>();
+
+
+    const [loading, setLoading] = useState(true);
+    const [buttons, setButtons] = useState(false);
+    const [status, setStatus] = useState<AVPlaybackStatusSuccess>();
+
+    const video = useRef<any>();
     const [currentIcon,setCurrentIcon] = useState<any>(  <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />)
 
     const rotationLeft = useRef(new Animated.Value(0)).current;
@@ -57,12 +67,6 @@ export default function Player() {
     });
   
 
-    const [videoUrl, setVideoUrl] = useState<URLProps>();
-    const [loading, setLoading] = useState(true);
-    const [buttons, setButtons] = useState(false);
-    const [status, setStatus] = useState<AVPlaybackStatusSuccess>();
-
-    const video = useRef<any>();
 
     const manager = new response.ResponseManager();
 
@@ -76,6 +80,8 @@ export default function Player() {
 
         return () => clearTimeout(timer); 
       }
+
+
     }, [buttons]);
 
     
@@ -103,6 +109,9 @@ export default function Player() {
     },[])
     
     const setPausedCallback = useCallback(async(event:any)=>{
+      if (event.didJustFinish==true && nextEp.current && nextEp.current.index_id){
+        openScreenPlayer(nextEp.current.video_id,nextEp.current.index_id.toString(),back_id)
+    }
       setStatus(event)
     },[])
     
@@ -137,16 +146,36 @@ export default function Player() {
 
     function backRouter(){
       deactivateKeepAwake()
-      router.back()
+      if (back_id){
+        openScreenAnime(back_id)
+
+      }else{router.back()}
     }
 
 
     useEffect(() => {
       async function getURL(id:any){
         let session = new SessionManager()
+
         let url = session.router_ep(id)
         let data = await session.get(url)
+        
+        
+        let url_cat_id = session.router_cat_id(data[0].category_id)
+
+        let data_cat:EpsodiesProps[] = await session.get(url_cat_id)
+        
         data = manager.parse(data);
+
+        data_cat  =data_cat.reverse()
+
+        let currentIndex = parseInt(current)
+        if (currentIndex <data_cat.length-1 ){
+
+          data_cat[currentIndex+1].index_id=currentIndex+1
+          nextEp.current = data_cat[currentIndex+1]
+            
+        }
 
         setVideoUrl(data);
         setLoading(false)

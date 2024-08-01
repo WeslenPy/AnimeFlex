@@ -21,6 +21,7 @@ export interface EpsodiesProps{
     video_id:string;
     category_id:string;
     title:string;
+    index_id:number
   
   }
      
