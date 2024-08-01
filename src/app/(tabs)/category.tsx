@@ -14,7 +14,7 @@ export default function CategoryAnime() {
  return (
     
     <View className='w-full h-full bg-black ' >
-      <Header config={{focus:false,set:()=>{},focused:openScreenInfo}}/>
+      <View className='p-4 pb-0'><Header config={{focus:false,set:()=>{},focused:openScreenInfo}}/></View> 
 
       <ScrollView className=' mt-5'> 
           <View className='flex flex-row flex-wrap justify-center items-center gap-5 mb-10'>

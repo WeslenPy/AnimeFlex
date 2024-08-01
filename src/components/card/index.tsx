@@ -12,7 +12,7 @@ export function Card({anime}:{anime:AnimeProps}) {
             <View className='bg-slate-400 rounded-md'>
                 <Image className='w-44 h-80 rounded-md' progressiveRenderingEnabled={true}  source={{uri:url.router_image(anime.category_image)}} />
             </View>
-            <Text className='text-white w-44 text-wrap mt-2'>{anime.category_name || anime.title}</Text>
+            <Text className='text-white w-44  mt-2'>{anime.category_name || anime.title}</Text>
        </Pressable>
     );
 };

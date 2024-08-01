@@ -12,7 +12,7 @@ export function openScreenPlayer(video_id:string,current_index:string,page:any){
 
 }
 
-export function openScreenInfo(){
-    return router.navigate("/info")
+export function openScreenInfo(category:string=""){
+    return router.navigate(`/info?category=${category}`)
 
 }

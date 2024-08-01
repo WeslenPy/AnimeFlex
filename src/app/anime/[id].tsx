@@ -13,8 +13,9 @@ import StatusBar from "@/src/components/header/statusbar";
 
 export default function Anime() {
   const H_MAX_HEIGHT= 300;
-  const H_MIN_HEIGHT= 60;
+  var H_MIN_HEIGHT= useRef(80).current;
   const H_SCROLL_DISTANCE= H_MAX_HEIGHT-H_MIN_HEIGHT;
+
 
   const scrollOffSetY = useRef(new Animated.Value(0)).current;
 
@@ -80,7 +81,7 @@ export default function Anime() {
       <Animated.View className='mt-5 text-white p-5  absolute z-50 top-5 left-0 right-0 bg-black overflow-hidden' style={{height:headerScrollHeight}}>
         {info ?
           <View className='flex flex-col'>
-            <Text className='text-white text-3xl mb-2'>{info.category_name}</Text>
+            <Text className='text-white text-3xl mb-2' onLayout={(event)=>{let { height } = event.nativeEvent.layout;H_MIN_HEIGHT=height+10}}>{info.category_name}</Text>
             <Text className='text-white mb-2'>•<Text className='text-green-600'> Série </Text>• | Ano {info.ano} </Text>
 
             {info.category_description.length>0?

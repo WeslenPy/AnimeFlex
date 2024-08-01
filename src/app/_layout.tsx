@@ -15,7 +15,7 @@ export default function Layout() {
       <Stack.Screen name="(tabs)" options={{ headerShown: false,statusBarTranslucent:true }} />
       <Stack.Screen name="(viewer)" options={{ headerShown: false,statusBarTranslucent:true }} />
       <Stack.Screen name="anime/[id]" options={{ headerShown: false,statusBarTranslucent:true  }} />
-      <Stack.Screen  name="play/[id]" options={{ headerShown: false,statusBarTranslucent:false,statusBarHidden:true}} />
+      <Stack.Screen  name="play/[id]" options={{ headerShown: false,statusBarTranslucent:true,statusBarHidden:true}} />
     </Stack>
   );
 }

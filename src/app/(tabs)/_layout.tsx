@@ -13,7 +13,7 @@ export default function RootLayout() {
 
   const options = {
     tabBarHideOnKeyboard:true,
-    headerTintColor:config.headerTintColor,
+    // headerTintColor:config.headerTintColor,
     tabBarActiveTintColor:config.tabBarActiveTintColor,
     tabBarActiveBackgroundColor:config.tabBarActiveBackgroundColor,
     tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor,
@@ -24,7 +24,9 @@ export default function RootLayout() {
 
 
   return (
-    <Tabs screenOptions={{tabBarActiveBackgroundColor:config.headerTintColor,tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor}} >
+    <Tabs screenOptions={{tabBarActiveBackgroundColor:config.headerTintColor,
+                    tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor,
+                    tabBarStyle:{backgroundColor:config.headerTintColor,height:60,paddingBottom:8}}} >
       <Tabs.Screen name="index" 
       
             options={{

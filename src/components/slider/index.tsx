@@ -1,4 +1,4 @@
-import { View,Text} from 'react-native';
+import { View,Text,ActivityIndicator} from 'react-native';
 import { useEffect,useState } from 'react';
 import {SessionManager} from "../../api/animetv/session";
 import { AnimeProps } from "../../interfaces/anime";
@@ -17,6 +17,7 @@ export function Slider() {
     const [recommend,setRecommend] = useState<AnimeProps[]>([]);
     const [populares,setPopulares] = useState<AnimeProps[]>([]);
     const [romance,setRomance] = useState<AnimeProps[]>([]);
+    const [loading,setLoading] = useState(true);
 
     const session = new SessionManager()
 
@@ -40,6 +41,8 @@ export function Slider() {
         setPopulares(data_popular);
         setRecommend(data_recommend);
         setRomance(data_romance);
+        setLoading(false)
+
 
       }
 
@@ -50,7 +53,13 @@ export function Slider() {
 
 
  return (
-    <View className='w-full mt-4 m-4  mb-5'>
+    <View className='w-full mt-4 m-4 mb-5 h-full'>
+
+      {loading?
+        <View className='items-center justify-center  p-10'>
+          <ActivityIndicator size={50} color="orange" />
+        </View>
+      :<>
         <Flat config={{title:"NOVOS EPISODIOS",variavel:recommend}}></Flat>
         <Flat config={{title:"ANIMES POPULARES",variavel:populares}}></Flat>
         <Flat config={{title:"ANIMES SOBRE ROMANCE",variavel:romance}}></Flat>
@@ -58,7 +67,9 @@ export function Slider() {
         <View className='w-full justify-center items-center mt-5 mb-5'>
           <Text className='text-gray-50'>Você chegou ao fim da lista.</Text>
         </View>
+      </>
    
+        }
     </View>
   );
 }

@@ -3,7 +3,7 @@ import { SessionManager } from '@/src/api/animetv/session';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
-import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated} from 'react-native';
+import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated } from 'react-native';
 import response from "../../api/animetv/response";
 import { Video, ResizeMode, VideoFullscreenUpdateEvent,AVPlaybackStatusSuccess } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
@@ -78,7 +78,7 @@ export default function Player() {
       if (buttons && status && status.isLoaded==true && status.isPlaying==true) {
         let timer = setTimeout(() => {
           setButtons(false);
-        }, 3000); 
+        }, 5000); 
 
         return () => clearTimeout(timer); 
       }
@@ -140,6 +140,12 @@ export default function Player() {
           }
           video.current.setPositionAsync(newPosition);
           video.current.playAsync()
+
+          let timer = setTimeout(() => {
+            setButtons(false);
+          }, 1000); 
+  
+          return () => clearTimeout(timer); 
         }
     }
 
@@ -251,75 +257,77 @@ export default function Player() {
 
             {buttons==true? 
             <View>
-              <View  className='flex-row h-full w-full items-center p-2 justify-between'>
+              <View  className='flex-col h-full w-full justify-between p-2'>
 
-                <View  style={styles.buttonBorder}>
+                <View className='flex-row justify-between w-full p-3'>
 
-                  <TouchableOpacity onPress={backRouter}>
-                      <AntDesign name="arrowleft" size={30} color="white" />
+                    <TouchableOpacity onPress={backRouter}>
+                        <AntDesign name="arrowleft" size={30} color="white" />
                     </TouchableOpacity>
+
+
+                    <View className='flex-row'>
+
+                      {nextEp && nextEp.current?
+                        <View className='mx-5'>
+                          <TouchableOpacity onPressOut={nextEpScreen} >
+                            <Fontisto name="step-forward" size={28} color="white" />
+                          </TouchableOpacity>
+
+                        </View>
+                      :<></>}
+
+                      <TouchableOpacity  onPressOut={onChangeScreen} >
+                        {currentIcon}
+                      </TouchableOpacity>
+                    
+
+                  </View>
+                  
                 </View>
 
                 {status && status.isLoaded==true ?
-                <>
 
-                <TouchableOpacity style={[styles.button,styles.forwardLeft]} activeOpacity={0.2} onPressOut={()=>{progressPlay(-10);rotateButton("left")}} >
-                  <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],}} >
-                    <Ionicons name="reload" size={80} color="white"  />
+                <View className='flex-row w-full '>
+                  <TouchableOpacity style={[styles.button,styles.forwardLeft]} activeOpacity={0.2} onPressOut={()=>{progressPlay(-10);rotateButton("left")}} >
+                    <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],}} >
+                      <Ionicons name="reload" size={80} color="white"  />
 
-                  </Animated.View>
-                </TouchableOpacity>
+                    </Animated.View>
+                  </TouchableOpacity>
 
-              
                 
-                <TouchableOpacity style={[styles.button,styles.play]} onPressOut={pauseOrPlayVideo}> 
-                  <Feather name={!status || !status.isPlaying? 'play': "pause"} color={"white"} size={80}></Feather>
+                  
+                  <TouchableOpacity style={[styles.button,styles.play]} onPressOut={pauseOrPlayVideo}> 
+                    <Feather name={!status || !status.isPlaying? 'play': "pause"} color={"white"} size={80}></Feather>
 
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.button,styles.forwardRigth]} onPressOut={()=>{progressPlay(10);rotateButton("rigth")}}>
-                  <Animated.View style={{transform:[{rotate:rotationInterpolateRigth}]}}>
-                    <Ionicons name="reload" size={80} color="white" />
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.button,styles.forwardRigth]} onPressOut={()=>{progressPlay(10);rotateButton("rigth")}}>
+                    <Animated.View style={{transform:[{rotate:rotationInterpolateRigth}]}}>
+                      <Ionicons name="reload" size={80} color="white" />
 
-                  </Animated.View>
+                    </Animated.View>
 
-                </TouchableOpacity>
-
-                </>:
-                <View className='mb-4'>
+                  </TouchableOpacity>
+                </View>:
+                <View className='flex-row w-full items-center justify-center'>
                   <ActivityIndicator size={50} color="orange" />
                 </View>
                 }
 
-                <View  style={styles.buttonBorder} >
-                  <View className='flex-row'>
-                    {nextEp && nextEp.current?
-                    <View className='mx-5'>
-                      <TouchableOpacity onPressOut={nextEpScreen} >
-                        <Fontisto name="step-forward" size={28} color="white" />
-                      </TouchableOpacity>
 
-                    </View>
-                    :<></>}
+                <View className='flex-row  w-full p-2 '>
+                    <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
 
-                    <TouchableOpacity  onPressOut={onChangeScreen} >
-                      {currentIcon}
-                    </TouchableOpacity>
+                    <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
+                          style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red' maximumTrackTintColor='#24221d'
+                          onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
 
+                    <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
+                    
                   </View>
-
                 </View>
-
-              </View>
-                <View className=' w-full p-4 bottom-28 flex-row '>
-                  <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
-
-                  <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
-                        style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red' maximumTrackTintColor='#24221d'
-                        onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
-
-                  <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
-                  
-                </View>
+      
               </View>
                 :<View className='flex-row h-full w-full'><TouchableOpacity style={styles.buttonFull} onPress={()=>{setButtons(true)}}></TouchableOpacity></View>
               }
