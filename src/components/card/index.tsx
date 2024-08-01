@@ -7,7 +7,6 @@ import openScreenAnime, { openScreenPlayer } from '@/src/utils/screen';
 export function Card({anime}:{anime:AnimeProps}) {
 
     let url = new manager.URLManager()
-    console.log(anime)
     return (
        <Pressable className='flex flex-col items-center'  onPress={() => {anime.id?openScreenAnime(anime.id):openScreenPlayer(anime.video_id)}}>
             <View className='bg-slate-400 rounded-md'>

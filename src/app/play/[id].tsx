@@ -3,9 +3,9 @@ import { SessionManager } from '@/src/api/animetv/session';
 import { URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
-import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity } from 'react-native';
+import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated} from 'react-native';
 import response from "../../api/animetv/response";
-import { Video, ResizeMode, VideoState,VideoFullscreenUpdateEvent,AVPlaybackStatus,AVPlaybackStatusSuccess } from 'expo-av';
+import { Video, ResizeMode, VideoFullscreenUpdateEvent,AVPlaybackStatusSuccess } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather } from '@expo/vector-icons';
 import { Ionicons } from '@expo/vector-icons';
@@ -13,11 +13,49 @@ import AntDesign from '@expo/vector-icons/AntDesign';
 import Foundation from '@expo/vector-icons/Foundation';
 import { router } from "expo-router";
 import Slider from '@react-native-community/slider';
+import { useKeepAwake,deactivateKeepAwake } from 'expo-keep-awake';
+import {StatusBar} from 'expo-status-bar';
+import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 
 
 export default function Player() {
+    useKeepAwake();
     const {id} = useLocalSearchParams();
 
+
+    const [currentIcon,setCurrentIcon] = useState<any>(  <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />)
+
+    const rotationLeft = useRef(new Animated.Value(0)).current;
+    const rotationRight = useRef(new Animated.Value(0)).current;
+
+    const rotateButton = (direction:string) => {
+      const rotation = direction === 'left' ? rotationLeft : rotationRight;
+      const toValue = 1
+  
+      Animated.timing(rotation, {
+        toValue,
+        duration: 500,
+        useNativeDriver: true,
+      }).start(() => {
+        Animated.timing(rotation, {
+          toValue: 0,
+          duration: 500,
+          useNativeDriver: true,
+        }).start();
+      });
+    };
+  
+  
+  const rotationInterpolateLeft = rotationLeft.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '90deg'],
+    });
+    
+  const rotationInterpolateRigth = rotationRight.interpolate({
+      inputRange: [0, 1],
+      outputRange: ['0deg', '90deg'],
+    });
+  
 
     const [videoUrl, setVideoUrl] = useState<URLProps>();
     const [loading, setLoading] = useState(true);
@@ -30,19 +68,17 @@ export default function Player() {
 
 
     useEffect(() => {
-      if (buttons) {
+
+      if (buttons && status && status.isLoaded==true && status.isPlaying==true) {
         let timer = setTimeout(() => {
           setButtons(false);
-        }, 5000); //5s
+        }, 5000); 
 
         return () => clearTimeout(timer); 
       }
     }, [buttons]);
 
-
-    const getCurrentState = useCallback(async()=>{
-       return  await ScreenOrientation.getOrientationLockAsync()
-    },[])
+    
 
 
     async function onChangeScreen(){
@@ -50,8 +86,14 @@ export default function Player() {
 
       if(result == 2){
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
-      }else{
-        ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+        return  setCurrentIcon(
+          <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />
+          )
+        }else{
+          ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+          return setCurrentIcon(
+            <Foundation name="arrows-out" size={30} color="white" />
+          )
       }
     }
 
@@ -66,6 +108,9 @@ export default function Player() {
     
     const onReadScreenChange = useCallback((event:any)=>{
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+        return  setCurrentIcon(
+          <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />
+          )
     },[])    
     
 
@@ -83,11 +128,15 @@ export default function Player() {
             let newPosition = status.durationMillis; // Evita avançar além da duração do vídeo
           }
           video.current.setPositionAsync(newPosition);
+          video.current.playAsync()
         }
     }
+
   }
 
+
     function backRouter(){
+      deactivateKeepAwake()
       router.back()
     }
 
@@ -120,28 +169,28 @@ export default function Player() {
 
       let mount = ""
 
-      if (formattedHours !="00"){mount+=`${formattedHours}:`}
+      if (formattedHours !="00"){mount+=`${formattedHours}`}
 
 
       mount+=`${formattedHours!="00"?":":""}${formattedMinutes}`
-      mount+=`:${formattedMinutes!="00"?":":""}${formattedSeconds}`
+      mount+=`:${formattedSeconds}`
 
-      return mount?mount:"00:00"
+      return mount!="0000"?mount.replace("::",":"):"00:00"
     
     };
     
 
-  if (loading) {
+  if (loading ) {
       return (
-        <View className='w-full h-full justify-center items-center'>
-          <ActivityIndicator size="large" color="orange" />
+        <View className='w-full h-full justify-center items-center bg-black'>
+          <ActivityIndicator size={50} color="orange" />
         </View>
       );
     }
-
  return (
     <View className='w-full h-full bg-black '   style={[styles.container]}>
     
+      <StatusBar translucent={true} hidden={true}/>
 
       <View className='relative h-full'>
         <Video
@@ -164,7 +213,7 @@ export default function Player() {
 
             {buttons==true? 
             <View>
-              <View  className='flex-row h-full w-full justify-center items-center p-2'>
+              <View  className='flex-row h-full w-full first-letter items-center p-2 justify-between'>
 
                 <View  style={styles.buttonBorder}>
 
@@ -172,26 +221,40 @@ export default function Player() {
                       <AntDesign name="arrowleft" size={30} color="white" />
                     </TouchableOpacity>
                 </View>
-              
 
-                <TouchableOpacity style={[styles.button,styles.forwardLeft]} onPressOut={()=>{progressPlay(-10)}}>
-                  <View style={styles.icon}>
-                  <Ionicons name="reload" size={80} color="white"  />
+                {status && status.isLoaded==true ?
+                <>
 
-                  </View>
+                <TouchableOpacity style={[styles.button,styles.forwardLeft]} activeOpacity={0.2} onPressOut={()=>{progressPlay(-10);rotateButton("left")}} >
+                  <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],}} >
+                    <Ionicons name="reload" size={80} color="white"  />
+
+                  </Animated.View>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button,styles.play]} onPress={pauseOrPlayVideo}> 
+
+              
+                
+                <TouchableOpacity style={[styles.button,styles.play]} onPressOut={pauseOrPlayVideo}> 
                   <Feather name={!status || !status.isPlaying? 'play': "pause"} color={"white"} size={80}></Feather>
 
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button,styles.forwardRigth]} onPressOut={()=>{progressPlay(10)}}>
-                  <Ionicons name="reload" size={80} color="white" />
+                <TouchableOpacity style={[styles.button,styles.forwardRigth]} onPressOut={()=>{progressPlay(10);rotateButton("rigth")}}>
+                  <Animated.View style={{transform:[{rotate:rotationInterpolateRigth}]}}>
+                    <Ionicons name="reload" size={80} color="white" />
+
+                  </Animated.View>
 
                 </TouchableOpacity>
 
+                </>:
+                <View className='mb-4'>
+                  <ActivityIndicator size={50} color="orange" />
+                </View>
+                }
+
                 <View  style={styles.buttonBorder} >
-                  <TouchableOpacity onPress={onChangeScreen} >
-                      <Foundation name="arrows-out" size={30} color="white" />
+                  <TouchableOpacity onPressOut={onChangeScreen} >
+                    {currentIcon}
 
                   </TouchableOpacity>
 
@@ -202,7 +265,7 @@ export default function Player() {
                   <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
 
                   <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
-                        style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red'
+                        style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red' maximumTrackTintColor='#24221d'
                         onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
 
                   <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
