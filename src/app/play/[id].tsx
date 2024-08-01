@@ -1,7 +1,7 @@
 
 import { SessionManager } from '@/src/api/animetv/session';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
-import { useLocalSearchParams,useGlobalSearchParams } from 'expo-router';
+import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
 import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated} from 'react-native';
 import response from "../../api/animetv/response";
@@ -18,6 +18,9 @@ import {StatusBar} from 'expo-status-bar';
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { openScreenPlayer } from '@/src/utils/screen';
 import openScreenAnime from '@/src/utils/screen';
+import Fontisto from '@expo/vector-icons/Fontisto';
+
+
 
 export default function Player() {
     useKeepAwake();
@@ -109,9 +112,9 @@ export default function Player() {
     },[])
     
     const setPausedCallback = useCallback(async(event:any)=>{
-      if (event.didJustFinish==true && nextEp.current && nextEp.current.index_id){
-        openScreenPlayer(nextEp.current.video_id,nextEp.current.index_id.toString(),back_id)
-    }
+      if (event.didJustFinish==true){
+        nextEpScreen()
+      }
       setStatus(event)
     },[])
     
@@ -142,6 +145,12 @@ export default function Player() {
     }
 
   }
+
+    function nextEpScreen(){
+      if(nextEp.current && nextEp.current.index_id){
+        openScreenPlayer(nextEp.current.video_id,nextEp.current.index_id.toString(),back_id)
+      }
+    }
 
 
     function backRouter(){
@@ -242,7 +251,7 @@ export default function Player() {
 
             {buttons==true? 
             <View>
-              <View  className='flex-row h-full w-full first-letter items-center p-2 justify-between'>
+              <View  className='flex-row h-full w-full items-center p-2 justify-between'>
 
                 <View  style={styles.buttonBorder}>
 
@@ -282,10 +291,21 @@ export default function Player() {
                 }
 
                 <View  style={styles.buttonBorder} >
-                  <TouchableOpacity onPressOut={onChangeScreen} >
-                    {currentIcon}
+                  <View className='flex-row'>
+                    {nextEp && nextEp.current?
+                    <View className='mx-5'>
+                      <TouchableOpacity onPressOut={nextEpScreen} >
+                        <Fontisto name="step-forward" size={28} color="white" />
+                      </TouchableOpacity>
 
-                  </TouchableOpacity>
+                    </View>
+                    :<></>}
+
+                    <TouchableOpacity  onPressOut={onChangeScreen} >
+                      {currentIcon}
+                    </TouchableOpacity>
+
+                  </View>
 
                 </View>
 
