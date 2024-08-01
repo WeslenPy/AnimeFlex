@@ -75,11 +75,10 @@ export default function Player() {
 
 
     useEffect(() => {
-
       if (buttons && status && status.isLoaded==true && status.isPlaying==true) {
         let timer = setTimeout(() => {
           setButtons(false);
-        }, 5000); 
+        }, 3000); 
 
         return () => clearTimeout(timer); 
       }
@@ -148,6 +147,7 @@ export default function Player() {
 
     function nextEpScreen(){
       if(nextEp.current && nextEp.current.index_id){
+        video.current.pauseAsync()
         openScreenPlayer(nextEp.current.video_id,nextEp.current.index_id.toString(),back_id)
       }
     }
