@@ -1,10 +1,10 @@
 
-import { SessionManager } from '@/src/api/animetv/session';
+import { SessionManager } from '@/src/controller/api/animetv/session';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState,useCallback } from 'react';
 import {  View, Text, ActivityIndicator,StyleSheet,TouchableOpacity ,Animated } from 'react-native';
-import response from "../../api/animetv/response";
+import response from "@/src/controller/api/animetv/response";
 import { Video, ResizeMode, VideoFullscreenUpdateEvent,AVPlaybackStatusSuccess } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather } from '@expo/vector-icons';
@@ -19,11 +19,13 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import { openScreenPlayer } from '@/src/utils/screen';
 import openScreenAnime from '@/src/utils/screen';
 import Fontisto from '@expo/vector-icons/Fontisto';
-
+import AnimeStorage from '@/src/controller/storage/manager';
 
 
 export default function Player() {
     useKeepAwake();
+
+    const storage = new AnimeStorage()
     const {id,current, back_id}= useLocalSearchParams<{ id: string,current: string,back_id:string}>();
 
 
@@ -33,7 +35,7 @@ export default function Player() {
 
     const [loading, setLoading] = useState(true);
     const [buttons, setButtons] = useState(false);
-    const [status, setStatus] = useState<AVPlaybackStatusSuccess>();
+    const [status,setStatus] = useState<AVPlaybackStatusSuccess>();
 
     const video = useRef<any>();
     const [currentIcon,setCurrentIcon] = useState<any>(  <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />)
@@ -47,12 +49,12 @@ export default function Player() {
   
       Animated.timing(rotation, {
         toValue,
-        duration: 500,
+        duration: 300,
         useNativeDriver: true,
       }).start(() => {
         Animated.timing(rotation, {
           toValue: 0,
-          duration: 500,
+          duration: 300,
           useNativeDriver: true,
         }).start();
       });
@@ -76,15 +78,27 @@ export default function Player() {
 
     useEffect(() => {
       if (buttons && status && status.isLoaded==true && status.isPlaying==true) {
-        let timer = setTimeout(() => {
+        let timer = setTimeout(async () => {
           setButtons(false);
+          if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
+
         }, 5000); 
 
-        return () => clearTimeout(timer); 
+        return () => {clearTimeout(timer);};  
       }
 
+    }, [buttons]);   
+    
+    useEffect(() => {
 
-    }, [buttons]);
+      let interval = setInterval(async () => {
+          if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
+        }, 1000)
+
+      return () => clearInterval(interval);  
+
+      },[status])
+
 
     
 
@@ -114,7 +128,9 @@ export default function Player() {
       if (event.didJustFinish==true){
         nextEpScreen()
       }
+      
       setStatus(event)
+
     },[])
     
     const onReadScreenChange = useCallback((event:any)=>{
@@ -169,6 +185,8 @@ export default function Player() {
 
 
     useEffect(() => {
+      ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+
       async function getURL(id:any){
         let session = new SessionManager()
 
@@ -184,12 +202,14 @@ export default function Player() {
 
         data_cat  =data_cat.reverse()
 
-        let currentIndex = parseInt(current)
-        if (currentIndex <data_cat.length-1 ){
-
-          data_cat[currentIndex+1].index_id=currentIndex+1
-          nextEp.current = data_cat[currentIndex+1]
-            
+        if(current){
+          let currentIndex = parseInt(current)
+          if (currentIndex <data_cat.length-1 ){
+  
+            data_cat[currentIndex+1].index_id=currentIndex+1
+            nextEp.current = data_cat[currentIndex+1]
+              
+          }
         }
 
         setVideoUrl(data);
@@ -201,7 +221,7 @@ export default function Player() {
 
 
 
-  const formatTime = (milliseconds:number) => {
+  const formatTime = (milliseconds:any) => {
       const totalSeconds = Math.floor(milliseconds / 1000);
       const hours = Math.floor(totalSeconds / 3600);
       const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -241,7 +261,7 @@ export default function Player() {
           style={[StyleSheet.absoluteFillObject]}
           ref={video}
           source={{
-            uri: videoUrl.urls[videoUrl.urls.length - 1],
+            uri: videoUrl?videoUrl.urls[videoUrl.urls.length - 1]:"",
           }}
           onLoad={onReadScreenChange}
           useNativeControls={false}

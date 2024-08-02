@@ -4,7 +4,7 @@ import { useEffect,useState } from 'react';
 import { Header } from "@/src/components/header";
 import Box from "@/src/components/box";
 import { AnimeProps } from "@/src/interfaces/anime";
-import {SessionManager} from "../../api/animetv/session";
+import {SessionManager} from "@/src/controller/api/animetv/session";
 
 import { useLocalSearchParams } from "expo-router";
 

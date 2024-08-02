@@ -1,7 +1,7 @@
 import { View,Text,ActivityIndicator} from 'react-native';
 import { useEffect,useState } from 'react';
-import {SessionManager} from "../../api/animetv/session";
-import { AnimeProps } from "../../interfaces/anime";
+import {SessionManager} from "@/src/controller/api/animetv/session";
+import { AnimeProps } from "@/src/interfaces/anime";
 import Flat from '../flat';
 
 function shuffleArray(array:[]) {

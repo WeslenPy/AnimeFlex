@@ -37,8 +37,9 @@ export default function RootLayout() {
               }
       }}/>   
 
-    <Tabs.Screen name="favorites" 
+    <Tabs.Screen name="favoriteTab" 
             options={{
+              headerTransparent:true,
               ...options,
               title:"Favoritos",
               tabBarIcon:({focused,color,size})=>{

@@ -1,22 +1,29 @@
-import { View,FlatList,Text,ScrollView,Pressable,Animated } from 'react-native';
-import { useEffect,useState,useRef } from 'react';
+import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl } from 'react-native';
+import { useEffect,useState,useRef, useCallback } from 'react';
 
 import {useLocalSearchParams } from 'expo-router';
-import {SessionManager} from "../../api/animetv/session";
+import {SessionManager} from "@/src/controller/api/animetv/session";
 import { EpsodiesProps, InfoProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather } from '@expo/vector-icons';
 import { openScreenPlayer, }  from '@/src/utils/screen';
-import StatusBar from "@/src/components/header/statusbar";
-
+import StatusBarPadding from "@/src/components/header/statusbar";
 
 export default function Anime() {
-  const H_MAX_HEIGHT= 300;
+
+  const {id} = useLocalSearchParams<{id:string}>();
+
+  const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
+  const [info,setInfo] = useState<InfoProps>();
+  const [refreshing, setRefreshing] = useState(false);
+
+  
+  const H_MAX_HEIGHT= 210;
   var H_MIN_HEIGHT= useRef(80).current;
   const H_SCROLL_DISTANCE= H_MAX_HEIGHT-H_MIN_HEIGHT;
 
-
+  
   const scrollOffSetY = useRef(new Animated.Value(0)).current;
 
   const headerScrollHeight = scrollOffSetY.interpolate({
@@ -25,40 +32,41 @@ export default function Anime() {
     extrapolate:"clamp",
   })
 
-  const {id} = useLocalSearchParams<{id:string}>();
+  const session = new SessionManager()
 
-  const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
-  const [info,setInfo] = useState<InfoProps>();
+  async function getEpsodies(){
+    let url_cat = session.router_cat_id(id)
+    let data_cat:EpsodiesProps[] = await session.get(url_cat)
+    data_cat  = data_cat.reverse()
+
+    data_cat.forEach((item:EpsodiesProps,index:number)=>{
+        data_cat[index].index_id=index
+        data_cat[index].index_id=index
+    })
 
 
+
+    setEpsodies(data_cat);
+  }
+
+  async function getInfo(){
+    let url_info = session.router_info(id)
+    const data_info = await session.get(url_info)
+    setInfo(data_info[0]);
+
+
+  }
   
+  const onRefresh = useCallback(() => {
+    getEpsodies();  
+  }, []);
+
 
   useEffect(()=>{
     try{
-      async function getEpsodiesAndInfo(){
-        let session = new SessionManager()
-        let url_cat = session.router_cat_id(id)
-        let url_info = session.router_info(id)
-
-
-        let data_cat:EpsodiesProps[] = await session.get(url_cat)
-        const data_info = await session.get(url_info)
-
-        data_cat  = data_cat.reverse()
-
-        data_cat.forEach((item:EpsodiesProps,index:number)=>{
-            data_cat[index].index_id=index
-            data_cat[index].index_id=index
-        })
-
-
-
-        setEpsodies(data_cat);
-        setInfo(data_info[0]);
   
-      }
-  
-      getEpsodiesAndInfo();
+      getEpsodies();
+      getInfo();
 
     }catch(erro){
     }
@@ -75,7 +83,7 @@ export default function Anime() {
 
   return (
     <View className="bg-black w-full relative h-full"  >
-      <StatusBar></StatusBar>
+      <StatusBarPadding></StatusBarPadding>
       
 
       <Animated.View className='mt-5 text-white p-5  absolute z-50 top-5 left-0 right-0 bg-black overflow-hidden' style={{height:headerScrollHeight}}>
@@ -99,7 +107,8 @@ export default function Anime() {
 
       
       <View style={{marginBottom:120}}>
-          <FlatList  contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 
+          <FlatList   refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+                        contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 
                         showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
                         data={epsodies} scrollEventThrottle={16} onScroll={Animated.event([
                           {nativeEvent:{

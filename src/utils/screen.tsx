@@ -1,7 +1,7 @@
-import { useRouter,router } from "expo-router";
-
+import { router } from "expo-router";
 
 export default function openScreenAnime(anime_id:any){
+
 
     return router.navigate(`/anime/${anime_id}`)
 
