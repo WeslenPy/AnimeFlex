@@ -8,6 +8,7 @@ import "../styles/global.css";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite/next";
 import { View,Text } from 'react-native';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 
 const DATABASE_NAME="anime.db"
@@ -41,16 +42,26 @@ export default function Layout() {
     );
   }
 
+  const config ={
+    headerShown: false,
+    statusBarTranslucent:true 
+  }
+
  
 
   return (
+    
     <SQLiteProvider databaseName={DATABASE_NAME}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false,statusBarTranslucent:true }} />
-        <Stack.Screen name="(viewer)" options={{ headerShown: false,statusBarTranslucent:true }} />
-        <Stack.Screen name="anime/[id]" options={{ headerShown: false,statusBarTranslucent:true  }} />
-        <Stack.Screen  name="play/[id]" options={{ headerShown: false,statusBarTranslucent:true,statusBarHidden:true}} />
-      </Stack>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={config} />
+            <Stack.Screen name="(viewer)" options={config} />
+            <Stack.Screen name="anime/[id]" options={config} />
+            <Stack.Screen  name="play/[id]" options={{ ...config,statusBarHidden:true}} />
+          </Stack>
+      </GestureHandlerRootView>
+
+
     </SQLiteProvider>
   );
 }

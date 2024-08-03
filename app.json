@@ -40,7 +40,8 @@
         {
           "initialOrientation": "ALL"
         }
-      ]
+      ],
+      "expo-font"
     ],
     "experiments": {
       "typedRoutes": true
@@ -60,7 +61,7 @@
       "url": "https://u.expo.dev/7e6aa73d-954a-4a48-9d20-89078619eb50",
       "requestHeaders": {
         "expo-channel-name": "main"
-        }
+      }
     },
     "owner": "weslenpy"
   }

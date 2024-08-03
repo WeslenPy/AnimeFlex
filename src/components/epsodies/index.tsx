@@ -1,4 +1,4 @@
-import { View,Pressable,Text,Image,ActivityIndicator,StyleSheet } from 'react-native';
+import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
 import {openScreenPlayer} from '@/src/utils/screen';
 import { Feather } from '@expo/vector-icons';
@@ -50,16 +50,17 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
       },[]);
   
     return (
-            <Pressable className=' flex rounded-md justify-start' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page);}}>
+            <Pressable className=' flex rounded-md justify-start mx-1' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page);}}>
                 <View className='flex-row '>
                     <View className='flex-col  mr-2 p-1 mt-1 '>
-                        <View className='h-32 w-32 bg-slate-400 rounded-md relative'>
+                        <View className='h-32 w-32 rounded-md relative mx-1' style={{backgroundColor:"rgba(255,255,255,0.1)"}}>
                             <View className=''>
-                                {image && <Image source={{ uri: image }} progressiveRenderingEnabled={true} className='w-32 h-32 rounded-md' />}
+                                {image && <ImageBackground source={{ uri: image }} progressiveRenderingEnabled={true} className='w-32 h-32 rounded-md justify-center items-center' >
+                                                <Feather name="play-circle"  size={35} color="orange" />
+                                          </ImageBackground>}
 
                                 <View className='absolute  left-10 '>
-                        
-                                    {image?<View className='bottom-28'><Feather name="play-circle"  size={35} color="orange" /></View>  : <ActivityIndicator className='bottom-28' size="large" color="orange" />}
+                                    {image?  <></>: <ActivityIndicator className='bottom-32' size="large" color="orange" />}
 
                                 </View>
                             </View>
