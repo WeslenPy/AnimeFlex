@@ -1,7 +1,7 @@
 
 export interface AnimeProps{
-    id:string;
-    video_id:string;
+    id:string|number;
+    video_id:string|null|number;
     category_name:string;
     category_image:string;
     title:string

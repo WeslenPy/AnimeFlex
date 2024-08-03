@@ -1,6 +1,7 @@
 import { Tabs } from "expo-router";
 import { Ionicons } from '@expo/vector-icons';
 
+
 export default function RootLayout() {
 
   const config = {
@@ -24,6 +25,7 @@ export default function RootLayout() {
 
 
   return (
+
     <Tabs screenOptions={{tabBarActiveBackgroundColor:config.headerTintColor,
                     tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor,
                     tabBarStyle:{backgroundColor:config.headerTintColor,height:60,paddingBottom:8}}} >
@@ -71,6 +73,5 @@ export default function RootLayout() {
 
 
     </Tabs>
-
   );
 }

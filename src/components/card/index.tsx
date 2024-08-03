@@ -2,15 +2,14 @@ import { View,Pressable,Text,Image } from 'react-native';
 import manager from "@/src/controller/api/animetv/urls";
 import { AnimeProps } from "@/src/interfaces/anime";
 import openScreenAnime, { openScreenPlayer } from '@/src/utils/screen';
-
-import AnimeStorage from "@/src/controller/storage/manager";
+import { AnimeQuery } from '@/src/controller/storage/database';
 
 export function Card({anime}:{anime:AnimeProps}) {
 
+
     async function addHistory(){
-        
-        let storage = new AnimeStorage()
-        await storage.history(anime)
+        const storage = new AnimeQuery()
+        await storage.addHistory(anime)
     }
 
     let url = new manager.URLManager()

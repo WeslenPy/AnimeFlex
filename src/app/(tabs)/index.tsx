@@ -3,7 +3,6 @@ import { Header } from "../../components/header/index";
 import { Slider } from "../../components/slider/index";
 import { openScreenInfo } from "@/src/utils/screen";
 
-
 export default function Index() {
 
 
@@ -18,5 +17,6 @@ export default function Index() {
 
         </ScrollView>
     </View>
+
   );
 };

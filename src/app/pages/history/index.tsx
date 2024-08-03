@@ -1,21 +1,29 @@
 import { ActivityIndicator, View ,Text, FlatList, RefreshControl} from 'react-native';
-import AnimeStorage from '@/src/controller/storage/manager';
 import { AnimeProps } from '@/src/interfaces/anime';
 import { useCallback, useEffect, useState } from 'react';
 import {BoxHistory} from '@/src/components/box';
+import { AnimeQuery } from '@/src/controller/storage/database';
+
+
 
 export default function History() {
   const [history,setHistory] = useState<AnimeProps[]>([]);
   const [loading,setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
 
-  const storage = new AnimeStorage()
+  const storage = new AnimeQuery()
 
   async function getHistory(){
-    const result = await storage.get("history")
-    setHistory(result.history)
-    setLoading(false)
+    const result = await storage.getFullHistory()
+    if (result){
+
+      const formattedAnime= await storage.formatResult(result)
+      setHistory(formattedAnime)
+      
+    }
+    
     setRefreshing(false);
+    setLoading(false)
 
   }
 

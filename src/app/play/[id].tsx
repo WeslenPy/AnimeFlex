@@ -34,11 +34,11 @@ export default function Player() {
 
 
     const [loading, setLoading] = useState(true);
-    const [buttons, setButtons] = useState(false);
+    const [buttons, setButtons] = useState(true);
     const [status,setStatus] = useState<AVPlaybackStatusSuccess>();
 
     const video = useRef<any>();
-    const [currentIcon,setCurrentIcon] = useState<any>(  <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />)
+    const [currentIcon,setCurrentIcon] = useState<any>( <FontAwesome5 name="expand" size={20} color="white" />)
 
     const rotationLeft = useRef(new Animated.Value(0)).current;
     const rotationRight = useRef(new Animated.Value(0)).current;
@@ -76,18 +76,18 @@ export default function Player() {
     const manager = new response.ResponseManager();
 
 
-    useEffect(() => {
-      if (buttons && status && status.isLoaded==true && status.isPlaying==true) {
-        let timer = setTimeout(async () => {
-          setButtons(false);
-          if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
+    // useEffect(() => {
+    //   if (buttons ) {//&& status && status.isLoaded==true && status.isPlaying==true
+    //     let timer = setTimeout(async () => {
+    //       setButtons(false);
+    //       if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
 
-        }, 5000); 
+    //     }, 5000); 
 
-        return () => {clearTimeout(timer);};  
-      }
+    //     return () => {clearTimeout(timer);};  
+    //   }
 
-    }, [buttons]);   
+    // }, [buttons]);   
     
     useEffect(() => {
 
@@ -109,12 +109,12 @@ export default function Player() {
       if(result == 2){
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
         return  setCurrentIcon(
-          <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />
+          <FontAwesome5 name="expand" size={20} color="white" />
           )
         }else{
           ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
           return setCurrentIcon(
-            <Foundation name="arrows-out" size={30} color="white" />
+            <FontAwesome5 name="expand" size={20} color="white" />
           )
       }
     }
@@ -136,7 +136,7 @@ export default function Player() {
     const onReadScreenChange = useCallback((event:any)=>{
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
         return  setCurrentIcon(
-          <FontAwesome5 name="compress-arrows-alt" size={30} color="white" />
+          <FontAwesome5 name="expand" size={20} color="white" />
           )
     },[])    
     
@@ -297,10 +297,6 @@ export default function Player() {
                         </View>
                       :<></>}
 
-                      <TouchableOpacity  onPressOut={onChangeScreen} >
-                        {currentIcon}
-                      </TouchableOpacity>
-                    
 
                   </View>
                   
@@ -308,22 +304,38 @@ export default function Player() {
 
                 {status && status.isLoaded==true ?
 
-                <View className='flex-row w-full '>
-                  <TouchableOpacity style={[styles.button,styles.forwardLeft]} activeOpacity={0.2} onPressOut={()=>{progressPlay(-10);rotateButton("left")}} >
-                    <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],}} >
+                <View className='flex-row'>
+
+                  <TouchableOpacity style={[styles.button]} activeOpacity={0.6}  onPressOut={()=>{progressPlay(-10);rotateButton("left")}} >
+                    <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],opacity:0}} >
                       <Ionicons name="reload" size={80} color="white"  />
 
                     </Animated.View>
                   </TouchableOpacity>
 
-                
+                   <TouchableOpacity style={[styles.buttonStep,styles.forwardLeft]} activeOpacity={0.6}>
+                    <View className='rounded-full p-4' style={styles.opacity}>
+                      <AntDesign name="stepbackward" size={25} color="white" />
+                    </View>
+                  </TouchableOpacity>
                   
-                  <TouchableOpacity style={[styles.button,styles.play]} onPressOut={pauseOrPlayVideo}> 
-                    <Feather name={!status || !status.isPlaying? 'play': "pause"} color={"white"} size={80}></Feather>
+                  <TouchableOpacity style={[styles.button,styles.play]} activeOpacity={0.6} onPressOut={pauseOrPlayVideo}> 
+                    <View className='rounded-full p-4 justify-center items-center'  style={styles.opacity}>
+                      <AntDesign name={!status || !status.isPlaying? 'caretright': "pause"} color={"white"} size={60} />
+
+                    </View>
 
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.button,styles.forwardRigth]} onPressOut={()=>{progressPlay(10);rotateButton("rigth")}}>
-                    <Animated.View style={{transform:[{rotate:rotationInterpolateRigth}]}}>
+
+                  
+                  <TouchableOpacity style={[styles.buttonStep,styles.forwardRigth]}  activeOpacity={0.6} >
+                    <View className='rounded-full  p-4'  style={styles.opacity}>
+                      <AntDesign name="stepforward" size={25} color="white"  />
+                    </View>
+                  </TouchableOpacity>
+
+                  <TouchableOpacity style={[styles.button]} onPressOut={()=>{progressPlay(10);rotateButton("rigth")}}>
+                    <Animated.View style={{transform:[{rotate:rotationInterpolateRigth}],opacity:0}} >
                       <Ionicons name="reload" size={80} color="white" />
 
                     </Animated.View>
@@ -336,15 +348,22 @@ export default function Player() {
                 }
 
 
-                <View className='flex-row  w-full p-2 '>
-                    <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
+                <View className='flex-col  w-full p-2 gap-2'>
+                  <View className='justify-end items-end'>
+                    <TouchableOpacity  onPressOut={onChangeScreen} >
+                          {currentIcon}
+                        </TouchableOpacity>
+                  </View>
+                  <View className='flex-row'>
+                      <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
 
-                    <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
-                          style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red' maximumTrackTintColor='#24221d'
-                          onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
+                      <Slider minimumValue={0} maximumValue={status?status.durationMillis:0} value={status?status.positionMillis:0} 
+                            style={{flex:1}} thumbTintColor={"red"} minimumTrackTintColor='red' maximumTrackTintColor='#24221d'
+                            onValueChange={(x)=>{video.current.setPositionAsync(x);}}></Slider>
 
-                    <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
+                      <Text className='text-white'>{formatTime(status?status.durationMillis:0)}</Text>
                     
+                  </View>
                   </View>
                 </View>
       
@@ -362,6 +381,9 @@ export default function Player() {
 
 
 const styles = StyleSheet.create({
+  opacity:{
+    backgroundColor:"rgba(0,0,0,0.4)"
+  },
   container:{
     ...StyleSheet.absoluteFillObject,
     elevation:1,
@@ -376,7 +398,13 @@ const styles = StyleSheet.create({
   button:{
     flex:1,
     justifyContent:"center",
-    height:"100%"
+    height:"100%",
+    alignItems:"center"
+  },
+  buttonStep:{
+    justifyContent:"center",
+    height:"100%",
+
   },
   buttonBorder:{
     alignItems:"center",
@@ -394,5 +422,9 @@ const styles = StyleSheet.create({
   },
   icon:{
     transform: [{ scaleX: -1 }],
+  },
+  bording:{
+    borderRadius:10,
+    backgroundColor:"#ffff"
   }
 })
