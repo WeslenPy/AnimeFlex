@@ -53,7 +53,7 @@ export default function Frame(
  return (
     <SafeAreaView style={{flex:1}}>
 
-    <View className='absolute flex h-full w-full relative ' 
+    <View className='flex h-full w-full relative ' 
            style={{backgroundColor:buttons? "rgba(0,0,0,0.7)":"rgba(0,0,0,0)"}}>
 
             {buttons ?
