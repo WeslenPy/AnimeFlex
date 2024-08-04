@@ -8,10 +8,10 @@ import { NextEpButton,BackEpButton } from './nextBackButton';
 import { LeftFowardButton,RigthFowardButton } from './avancedPlayer';
 
 
-export default function MiddleButtons({status,video,nextEp,backId,progressPlay,setState,buttons}:{
+export default function MiddleButtons({status,video,nextEp,backId,progressPlay,setState,buttons,setIndicator}:{
                                   status:AVPlaybackStatusSuccess|undefined,video:Video|undefined,
                                   nextEp:EpsodiesProps|undefined,backId:string|undefined,
-                                  progressPlay:any,setState:any,buttons:boolean}) {
+                                  progressPlay:any,setState:any,buttons:boolean,setIndicator:any}) {
   
     function nextEpScreen(video_id:number|string){
       if(!video_id){
@@ -38,11 +38,11 @@ export default function MiddleButtons({status,video,nextEp,backId,progressPlay,s
    
     
   <View className='flex-row '>
-      <LeftFowardButton buttons={buttons} setState={setState} progressPlay={progressPlay}></LeftFowardButton>
+      <LeftFowardButton buttons={buttons} setState={setState} progressPlay={progressPlay} ></LeftFowardButton>
       <BackEpButton nextEpScreen={nextEpScreen} nextEp={nextEp} ></BackEpButton>
       <PlayButton status={status} pauseOrPlayVideo={pauseOrPlayVideo}></PlayButton>
       <NextEpButton nextEp={nextEp}  nextEpScreen={nextEpScreen}></NextEpButton>
-      <RigthFowardButton video={video} buttons={buttons} setState={setState} progressPlay={progressPlay}></RigthFowardButton>
+      <RigthFowardButton video={video} buttons={buttons} setState={setState} progressPlay={progressPlay} setIndicator={setIndicator}></RigthFowardButton>
 
     </View>
   );

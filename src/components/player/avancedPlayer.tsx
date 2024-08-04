@@ -9,6 +9,7 @@ import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { TouchableRipple } from 'react-native-paper';
 import { useSharedValue, withTiming } from 'react-native-reanimated';
 
+
 function rotateButton(rotation:any,setShowButton:any){
     const toValue = 1
 
@@ -33,7 +34,6 @@ function rotateButton(rotation:any,setShowButton:any){
 
 
 
-
 export  function LeftFowardButton({progressPlay,setState,buttons}:{progressPlay:any,setState:any,buttons:boolean}) {
 
     const [leftFoward, setLeftFoward] = useState(false);
@@ -45,8 +45,8 @@ export  function LeftFowardButton({progressPlay,setState,buttons}:{progressPlay:
         outputRange: ['0deg', '90deg'],
     });
 
-    const handleDoubleTapStart = () => {
-      progressPlay(10);
+    const handleDoubleTapStart = async () => {
+      await progressPlay(10);
       rotateButton(rotationLeft,setLeftFoward)
   };
   const handleSingleTapStart = () => {
@@ -58,10 +58,10 @@ export  function LeftFowardButton({progressPlay,setState,buttons}:{progressPlay:
   .maxDuration(250)
   .onStart(handleSingleTapStart);
 
-const doubleTap = Gesture.Tap()
-  .maxDuration(250)
-  .numberOfTaps(2)
-  .onStart(handleDoubleTapStart);
+  const doubleTap = Gesture.Tap()
+    .maxDuration(250)
+    .numberOfTaps(2)
+    .onStart(handleDoubleTapStart);
 
     return (
       <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap)}>
@@ -75,22 +75,43 @@ const doubleTap = Gesture.Tap()
     );
 }
 
-export  function RigthFowardButton({progressPlay,setState,buttons,video
-                }:{progressPlay:any,setState:any,buttons:boolean,video:Video|undefined}) {
+export  function RigthFowardButton({progressPlay,setState,buttons,video,setIndicator
+                }:{progressPlay:any,setState:any,buttons:boolean,video:Video|undefined,setIndicator:any}) {
 
 
     const [rightFoward, setRightFoward] = useState(false);
     const rotationRight = useRef(new Animated.Value(0)).current;
+    const intervalRef = useRef<NodeJS.Timeout | null>();
 
     const rotationInterpolateRigth = rotationRight.interpolate({
         inputRange: [0, 1],
         outputRange: ['0deg', '90deg'],
     });
 
-    const handleDoubleTapStart = () => {
-        progressPlay(10);
+    const handleDoubleTapStart = async () => {
+      await progressPlay(10);
+
         rotateButton(rotationRight,setRightFoward)
+    };    
+    
+    const handleLongTapStart = () => {
+      setIndicator(true)
+      intervalRef.current = setInterval(async ()=>{
+          await progressPlay(10,true,false);
+      },500)
+
     };
+
+
+   const handleLongTapEnd = () => {
+      setIndicator(false)
+      if (intervalRef.current) {
+          clearInterval(intervalRef.current);
+          intervalRef.current = null;
+        }
+      video?.playAsync()
+    };
+
     const handleSingleTapStart = () => {
       setState(!buttons)
     };
@@ -107,21 +128,14 @@ export  function RigthFowardButton({progressPlay,setState,buttons,video
 
 
   
-    // implementar gesture de controle de volume
-    const panGesture = Gesture.Pan()
-      // .activeOffsetY([200,0])
-      .activeOffsetX([0,0])
-      .onUpdate((e) => {
+  const longTap = Gesture.LongPress()
+    .minDuration(250)
+    .onStart(handleLongTapStart)
+    .onFinalize(handleLongTapEnd)
 
-        console.log(e.translationY)
-      })
-      .onEnd((e) => {
-        
-      });
-    
 
 return (
-  <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap)}>
+  <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap,longTap)}>
       <TouchableRipple rippleColor="rgba(255, 255, 255, .2)" style={[styles.button]} onPress={()=>{}} >
           <Animated.View style={{ transform: [{rotate:rotationInterpolateRigth}],opacity:rightFoward?1:0}} >
               <Ionicons name="reload" size={80} color="white"  />

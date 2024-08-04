@@ -8,7 +8,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AVPlaybackStatusSuccess, Video } from 'expo-av';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import GestureTap from './gestureTap';
-
+import { IndicatorAvanced } from '@/src/components/player/topButtons';
+import { useState } from 'react';
 
 export default function Frame(
     {
@@ -24,28 +25,30 @@ export default function Frame(
 
 }) {
 
+  const [indicator,setIndicator ]= useState(false);
 
     
 
-  function progressPlay(milles:number,convert=true){
+  async function progressPlay(milles:number,convert=true,autoPlay=true){
     
     if (video && status) {
-      if (status.isLoaded && status.durationMillis) {
+      if (status.durationMillis) {
         milles = convert?(milles*1000):milles
 
         let newPosition = status.positionMillis + milles; // 10 segundos em milissegundos
         if (newPosition >= status.durationMillis) {
             newPosition = status.durationMillis; 
         }
+        console.log("new position",newPosition)
+        status.positionMillis = newPosition
+        await video.setPositionAsync(newPosition);
 
-        video.setPositionAsync(newPosition);
-        video.playAsync()
+        if (autoPlay){
+          await video.playAsync()
 
-        let timer = setTimeout(() => {
-            setState(false);
-        }, 1000); 
+        }
 
-        return () => clearTimeout(timer); 
+      
       }
   }}
 
@@ -59,11 +62,11 @@ export default function Frame(
             {buttons ?
             <View className='flex-col justify-between h-full'>
 
-                <TopButtons backId={backId} videoURL={videoURL}></TopButtons>
+                <TopButtons backId={backId} videoURL={videoURL}   indicator={indicator}></TopButtons>
 
                 {status && status.isLoaded==true ?
 
-                <MiddleButtons backId={backId} status={status}  setState={setState}
+                <MiddleButtons backId={backId} status={status}  setState={setState} setIndicator={setIndicator}
                                 nextEp={nextEp} video={video}  buttons={buttons} 
                                 progressPlay={progressPlay}></MiddleButtons>
 
@@ -75,7 +78,7 @@ export default function Frame(
 
             </View>
             :
-                <HideButtons video={video} buttons={buttons}
+                <HideButtons video={video} buttons={buttons} setIndicator={setIndicator} indicator={indicator}
                            progressPlay={progressPlay} setState={setState}></HideButtons>
             }
 

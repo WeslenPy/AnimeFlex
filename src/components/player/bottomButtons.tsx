@@ -13,13 +13,13 @@ export default function BottomButtons(
 
  return (
    
-    <View className='flex-col  w-full p-3 gap-2'>
-        <View className='justify-end items-end'>
-        <TouchableOpacity  onPressOut={onChangeScreen} >
+    <View className='flex-col  gap-2'>
+        <View className='justify-end items-end mx-3'>
+            <TouchableOpacity  onPressOut={onChangeScreen} >
                 {currentIcon}
             </TouchableOpacity>
         </View>
-        <View className='flex-row'>
+        <View className='flex-row mb-10 mx-3 ml-3'>
             <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
 
             <Slider minimumValue={0} maximumValue={status?status.durationMillis:0}

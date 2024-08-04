@@ -17,12 +17,17 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
     const [progress, setProgress] = useState(0);
     const manager = new response.ResponseManager();
     
+    function getRandomInt(min:number, max:number) {
+        min = Math.ceil(min);
+        max = Math.floor(max);
+        return Math.floor(Math.random() * (max - min) + min);
+      }
+      
     useEffect(() => {
 
         async function getProgress(){
             const result = await storage.getProgress(ep.video_id)
             if (result){
-                console.log(result)
                 setProgress(result.progress==null?0:result.progress)
             }
   
@@ -37,7 +42,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
           data = manager.parse(data);
 
           
-          const { uri } = await VideoThumbnails.getThumbnailAsync(data.urls[data.urls.length-1], {time: 15000});
+          const { uri } = await VideoThumbnails.getThumbnailAsync(data.urls[data.urls.length-1], {time: getRandomInt(15000,50000)});
           setImage(uri);
 
          
@@ -52,10 +57,10 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
     return (
             <Pressable className=' flex rounded-md justify-start mx-1' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page);}}>
                 <View className='flex-row '>
-                    <View className='flex-col  mr-2 p-1 mt-1 '>
-                        <View className='h-32 w-32 rounded-md relative mx-1' style={{backgroundColor:"rgba(255,255,255,0.1)"}}>
-                            <View className=''>
-                                {image && <ImageBackground source={{ uri: image }} progressiveRenderingEnabled={true} className='w-32 h-32 rounded-md justify-center items-center' >
+                    <View className='flex-col  mr-2 p-1 mt-1 rounded-lg'>
+                        <View className='h-32 w-32 rounded-lg relative mx-1' style={{backgroundColor:"rgba(255,255,255,0.1)"}}>
+                            <View className='rounded-md'>
+                                {image && <ImageBackground source={{ uri: image }} progressiveRenderingEnabled={true}  className='w-32 h-32 rounded-lg justify-center items-center overflow-hidden'>
                                                 <Feather name="play-circle"  size={35} color="orange" />
                                           </ImageBackground>}
 

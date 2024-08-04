@@ -15,14 +15,19 @@ export default function Anime() {
   const {id} = useLocalSearchParams<{id:string}>();
 
   const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
+  const [paginated,setPaginated] = useState<EpsodiesProps[]>([]);
   const [info,setInfo] = useState<InfoProps>();
   const [refreshing, setRefreshing] = useState(false);
-
+  const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(1);
   
   const H_MAX_HEIGHT= 210;
   var H_MIN_HEIGHT= useRef(80).current;
   const H_SCROLL_DISTANCE= H_MAX_HEIGHT-H_MIN_HEIGHT;
 
+
+  const ITEMS_PER_PAGE = 4;
   
   const scrollOffSetY = useRef(new Animated.Value(0)).current;
 
@@ -46,6 +51,9 @@ export default function Anime() {
         }
 
     })
+
+
+    setPaginated(data_cat.slice(0, ITEMS_PER_PAGE));
 
 
 
@@ -82,6 +90,53 @@ export default function Anime() {
 
   })
 
+    useEffect(() => {
+      loadMoreData();
+    }, [page]);
+
+  const loadMoreData = () => {
+      if (loading) return;
+      setLoading(true);
+
+      let timeouted = setTimeout(() => {
+
+        if(epsodies.length>0){
+          const startIndex = paginated.length;
+          let endIndex = Math.min(startIndex + ITEMS_PER_PAGE, epsodies.length);
+
+          console.log(endIndex,epsodies.length)
+          
+          const newDisplayedData = epsodies.slice(startIndex, endIndex);
+          setPaginated(prevData => [...prevData, ...newDisplayedData]);
+
+          
+        }
+    
+        setLoading(false);
+
+    },1500)
+
+    return ()=>clearTimeout(timeouted);
+    
+  };
+
+  
+  const renderFooter = () => {
+    if (!loading && paginated.length >= epsodies.length) {return null}
+
+    return (
+      <View className='p-5'>
+        <ActivityIndicator size="large" color="orange" />
+      </View>
+    );
+  };
+
+  const handleLoadMore = () => {
+    if (!loading && paginated.length < epsodies.length) {
+      setPage(prevPage => prevPage + 1);
+    }
+  };
+
 
 
   return (
@@ -110,11 +165,11 @@ export default function Anime() {
 
       
       <View style={{marginBottom:120}}>
-          <FlatList ListEmptyComponent={<ActivityIndicator size="large" color="orange" />}
-                     refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          <FlatList ListEmptyComponent={<></>} onEndReachedThreshold={0.1} ListFooterComponent={renderFooter}
+                     refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}  onEndReached={handleLoadMore} 
                         contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 
                         showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
-                        data={epsodies} scrollEventThrottle={16} onScroll={Animated.event([
+                        data={paginated} scrollEventThrottle={16} onScroll={Animated.event([
                           {nativeEvent:{
                             contentOffset:
                             {y:scrollOffSetY}
