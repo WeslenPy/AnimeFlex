@@ -39,7 +39,7 @@ export function Card({anime}:{anime:AnimeProps}) {
                     <Text className='text-white w-44  mt-2'>{anime.category_name || anime.title}</Text>
 
             </Pressable>
-            <Preview reference={bottomSheetRef} animeId={anime.id}></Preview>
+            {/* <Preview reference={bottomSheetRef} animeId={anime.id}></Preview> */}
         </View>
     );
 };

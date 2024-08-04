@@ -62,8 +62,8 @@ export default function Frame(
 
                 {status && status.isLoaded==true ?
 
-                <MiddleButtons backId={backId} status={status} 
-                                nextEp={nextEp} video={video} 
+                <MiddleButtons backId={backId} status={status}  setState={setState}
+                                nextEp={nextEp} video={video}  buttons={buttons} 
                                 progressPlay={progressPlay}></MiddleButtons>
 
                 : <Loading></Loading>}
@@ -74,7 +74,8 @@ export default function Frame(
 
             </View>
             :
-                <HideButtons progressPlay={progressPlay} setState={setState}></HideButtons>
+                <HideButtons video={video} buttons={buttons}
+                           progressPlay={progressPlay} setState={setState}></HideButtons>
             }
 
               

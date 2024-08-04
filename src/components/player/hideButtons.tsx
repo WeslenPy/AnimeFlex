@@ -1,20 +1,20 @@
-import { TouchableOpacity, View,StyleSheet } from 'react-native';
+import {  View,StyleSheet } from 'react-native';
 import { LeftFowardButton,RigthFowardButton } from './avancedPlayer';
+import { Video } from 'expo-av';
 
 
+export default function HideButtons({setState,progressPlay,buttons,video}:{setState:any,progressPlay:any,buttons:boolean,video:Video|undefined}) {
 
-export default function HideButtons({setState,progressPlay}:{setState:any,progressPlay:any}) {
+
  return (
-    <View className='flex-row h-full w-full'>
-        <TouchableOpacity style={styles.buttonFull} onPress={()=>{setState(true)}}>
-          <View className='flex-row w-full h-full justify-between'>
-            <LeftFowardButton progressPlay={progressPlay}></LeftFowardButton>
-            <View className='w-52'></View>
-            <RigthFowardButton progressPlay={progressPlay}></RigthFowardButton>
+      <View className='flex-row' >
+        <View  style={styles.buttonFull}>
+          <View className='flex-row w-full h-full justify-between '>
+            <LeftFowardButton buttons={buttons} setState={setState} progressPlay={progressPlay}></LeftFowardButton>
+            <RigthFowardButton video={video} buttons={buttons}  setState={setState} progressPlay={progressPlay}></RigthFowardButton>
           </View>
-
-        </TouchableOpacity>
-  </View>
+        </View>
+    </View>
   );
 }
 

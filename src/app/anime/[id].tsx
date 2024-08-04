@@ -1,4 +1,4 @@
-import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl } from 'react-native';
+import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl, ActivityIndicator } from 'react-native';
 import { useEffect,useState,useRef, useCallback } from 'react';
 
 import {useLocalSearchParams } from 'expo-router';
@@ -41,7 +41,10 @@ export default function Anime() {
 
     data_cat.forEach((item:EpsodiesProps,index:number)=>{
         data_cat[index].index_id=index
-        data_cat[index].index_id=index
+        if (index!=0){
+          data_cat[index].back_ep=data_cat[index].video_id
+        }
+
     })
 
 
@@ -107,7 +110,8 @@ export default function Anime() {
 
       
       <View style={{marginBottom:120}}>
-          <FlatList   refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          <FlatList ListEmptyComponent={<ActivityIndicator size="large" color="orange" />}
+                     refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
                         contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 
                         showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
                         data={epsodies} scrollEventThrottle={16} onScroll={Animated.event([

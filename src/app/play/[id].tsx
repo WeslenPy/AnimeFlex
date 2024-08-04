@@ -2,7 +2,7 @@
 import { SessionManager } from '@/src/controller/api/animetv/session';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import { useLocalSearchParams } from 'expo-router';
-import { useEffect, useRef, useState,useCallback } from 'react';
+import { useEffect, useRef,useMemo, useState,useCallback } from 'react';
 import {  View, ActivityIndicator,StyleSheet} from 'react-native';
 import response from "@/src/controller/api/animetv/response";
 import { Video, ResizeMode, VideoFullscreenUpdateEvent,AVPlaybackStatusSuccess } from 'expo-av';
@@ -16,9 +16,12 @@ import AnimeStorage from '@/src/controller/storage/manager';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import Frame from '@/src/components/player/frame';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { PaperProvider } from 'react-native-paper';
 
 export default function Player() {
     useKeepAwake();
+
 
     const storage = new AnimeStorage()
     const {id,current, back_id}= useLocalSearchParams<{ id: string,current: string,back_id:string}>();
@@ -42,7 +45,8 @@ export default function Player() {
    
 
     useEffect(() => {
-      if (buttons ) {//&& status && status.isLoaded==true && status.isPlaying==true
+      console.log(status)
+      if (buttons && status && status.isLoaded==true && status.isPlaying==true) {//
         let timer = setTimeout(async () => {
           setButtons(false);
           if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
@@ -124,8 +128,14 @@ export default function Player() {
         if(current){
           let currentIndex = parseInt(current)
           if (currentIndex <data_cat.length-1 ){
+
+            let newIndex = currentIndex+1
+            let dataCurrent =  data_cat[newIndex]
   
-            data_cat[currentIndex+1].index_id=currentIndex+1
+            data_cat[newIndex].index_id=newIndex
+            if (currentIndex!=0){
+              data_cat[newIndex].back_ep=dataCurrent.video_id
+            }
             nextEp.current= data_cat[currentIndex+1]
               
           }
@@ -157,43 +167,52 @@ export default function Player() {
       );
     }
  return (
-      <View className='w-full h-full bg-black '   style={[styles.container]}>
-      
-        <StatusBar translucent={true} hidden={true}/>
+  <PaperProvider>
 
-        <View className='relative h-full'>
-          <Video
-            style={[StyleSheet.absoluteFillObject]}
-            ref={video}
-            source={{
-              uri: videoUrl?videoUrl.urls[videoUrl.urls.length - 1]:"",
-            }}
-            onLoad={onReadScreenChange}
-            useNativeControls={false}
-            shouldPlay={true}
-            resizeMode={ResizeMode.CONTAIN}
-            isLooping={false}
-            onFullscreenUpdate={onFullscreenChange}
-            onPlaybackStatusUpdate={setPausedCallback}
-            >
-            </Video>
-
-            <Frame
-              backId={back_id} 
-              status={status} 
-              setState={setButtons}
-              nextEp={nextEp.current} 
-              video={video.current} 
-              buttons={buttons}
-              videoURL={videoUrl}
-              currentIcon={currentIcon}
-              onChangeScreen={onChangeScreen}
-              ></Frame>
-          
-
-        </View>
+    <GestureHandlerRootView>
+        <View className='w-full h-full bg-black '   style={[styles.container]}>
         
-      </View>
+          <StatusBar translucent={true} hidden={true}/>
+
+          <View className='relative h-full'>
+            <Video
+              style={[StyleSheet.absoluteFillObject]}
+              ref={video}
+              source={{
+                uri: videoUrl?videoUrl.urls[videoUrl.urls.length - 1]:"",
+              }}
+              onLoad={onReadScreenChange}
+              useNativeControls={false}
+              shouldPlay={true}
+              resizeMode={ResizeMode.CONTAIN}
+              isLooping={false}
+              onFullscreenUpdate={onFullscreenChange}
+              onPlaybackStatusUpdate={setPausedCallback}
+              volume={1.0}
+              >
+              </Video>
+
+              <Frame
+                backId={back_id} 
+                status={status} 
+                setState={setButtons}
+                nextEp={nextEp.current} 
+                video={video.current} 
+                buttons={buttons}
+                videoURL={videoUrl}
+                currentIcon={currentIcon}
+                onChangeScreen={onChangeScreen}
+                ></Frame>
+
+
+            
+
+          </View>
+          
+        </View>
+      </GestureHandlerRootView>
+    </PaperProvider>
+
   );
 }
 

@@ -7,7 +7,7 @@ import { Portal, PaperProvider } from 'react-native-paper';
 export default function Preview({reference,animeId}:{reference:any,animeId:number|string}) {
   const [info,setInfo] = useState<AnimeProps>()
 
-  const snapPoints = useMemo(()=>["30%","80%",0],[])
+  const snapPoints = useMemo(()=>["30%","80%"],[])
 
 
   return (
@@ -15,7 +15,7 @@ export default function Preview({reference,animeId}:{reference:any,animeId:numbe
         <View className='flex-1'>
           <BottomSheet
             ref={reference}
-            index={2}
+            index={-1}
             enablePanDownToClose={true}
             snapPoints={snapPoints}
             backgroundStyle={{backgroundColor:"#fff"}}>

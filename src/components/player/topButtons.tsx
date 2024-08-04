@@ -1,29 +1,47 @@
 import { AntDesign, MaterialIcons } from '@expo/vector-icons';
-import React from 'react';
-import { TouchableOpacity, View,Text } from 'react-native';
+import React, { useMemo, useRef, useState } from 'react';
+import { TouchableOpacity, View,Text,StyleSheet } from 'react-native';
 import { deactivateKeepAwake } from 'expo-keep-awake';
 import { router } from "expo-router";
 import openScreenAnime from '@/src/utils/screen';
 import { URLProps } from '@/src/interfaces/anime';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { Portal } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function TopButtons({backId,videoURL}:{backId:string|undefined,videoURL:URLProps|undefined,}) {
 
+    const bottomSheetRef = useRef<BottomSheet>(null);
+    const snapPoints = useMemo(()=>["30%","80%"],[])
 
-function backRouter(){
-    deactivateKeepAwake()
-    if (backId){
-        openScreenAnime(backId)
+    const [expanded,setExpanded] = useState(false)
 
-    }else{router.back()}
-    }
+    function backRouter(){
+        deactivateKeepAwake()
+        if (backId){
+            openScreenAnime(backId)
+
+        }else{router.back()}
+        }
 
     function moreOptions(){
-    
+        if (bottomSheetRef.current){
+            if (expanded){
+                bottomSheetRef.current.close()
+                setExpanded(false)
+            }
+            else{
+                bottomSheetRef.current.expand()
+                setExpanded(true)
+            }
+        }
+
     }
 
  return (
-    <View  className='flex-col w-full justify-between p-2'>
-        <View className='flex-row justify-between w-full p-3'>
+
+    <View  className='flex-col justify-between p-2'>
+        <View className='flex-row justify-between  p-3'>
 
         <View className='flex-row items-center '>
 
@@ -35,11 +53,42 @@ function backRouter(){
             </View>
         </View>
 
-        <TouchableOpacity onPress={moreOptions}>
+        <TouchableOpacity onPress={moreOptions} >
             <MaterialIcons name="more-vert" size={30} color="white" />
         </TouchableOpacity>
 
+        <Portal >
+            <BottomSheet
+                ref={bottomSheetRef}
+                index={-1}
+                enablePanDownToClose={true}
+                snapPoints={snapPoints}
+                backgroundStyle={styles.bottomSheet}>
+                    <BottomSheetView style={styles.contentContainer}>
+                       <ScrollView className='w-full p-5'>
+                        <TouchableOpacity >
+                            <View className='rounded-lg bg-red-700 p-4 justify-center items-center'>
+                                <Text className='text-white'>Bloquear ações</Text>
+                            </View>
+                        </TouchableOpacity>
+
+                       </ScrollView>
+                    </BottomSheetView>
+            </BottomSheet>
+      </Portal>
         </View>
+
     </View>
+
   );
 }
+
+
+
+const styles = StyleSheet.create({
+    contentContainer: {
+      alignItems: 'center',
+    },
+    bottomSheet:{
+    }
+  });
