@@ -14,13 +14,13 @@ export default function History() {
   const storage = new AnimeQuery()
 
   async function getHistory(){
-    const result = await storage.getFullHistory()
-    if (result){
+    // const result = await storage.getFullHistory()
+    // if (result){
 
-      const formattedAnime= await storage.formatResult(result)
-      setHistory(formattedAnime)
+    //   const formattedAnime= await storage.formatResult(result)
+    //   setHistory(formattedAnime)
       
-    }
+    // }
     
     setRefreshing(false);
     setLoading(false)

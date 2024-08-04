@@ -1,12 +1,12 @@
 import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl, ActivityIndicator } from 'react-native';
-import { useEffect,useState,useRef, useCallback } from 'react';
+import React, { useEffect,useState,useRef, useCallback } from 'react';
 
 import {useLocalSearchParams } from 'expo-router';
 import {SessionManager} from "@/src/controller/api/animetv/session";
 import { EpsodiesProps, InfoProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Fontisto,AntDesign } from '@expo/vector-icons';
 import { openScreenPlayer, }  from '@/src/utils/screen';
 import StatusBarPadding from "@/src/components/header/statusbar";
 
@@ -129,11 +129,17 @@ export default function Anime() {
 
         
       <View className='absolute bottom-0 left-0 right-0 z-50'>
-        <View className='justify-between items-center p-5'>
-          <Pressable className='w-full bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id,epsodies[0].index_id.toString(),id):null;}}>
+        <View className='justify-between items-center p-5 flex-row gap-2 mb-1'>
+          <Pressable className='flex-1 bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id,epsodies[0].index_id.toString(),id):null;}}>
             <View className='flex-row justify-center items-center align-middle'>
-              <Feather name="play" size={30} color="black" />
-              <Text className='text-xl font-bold'>COMEÇAR A ASSISTIR E1</Text>
+              <Feather name="play" size={30} color="white" />
+              <Text className='text-xl font-bold text-white'>COMEÇAR A ASSISTIR E1</Text>
+            </View>
+          </Pressable> 
+          
+          <Pressable className='w-16 bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id,epsodies[0].index_id.toString(),id):null;}}>
+            <View className='flex-row justify-center items-center align-middle'>
+              <AntDesign name="staro" size={30} color="white" />
             </View>
           </Pressable>
 
