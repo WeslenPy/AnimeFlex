@@ -6,7 +6,6 @@ import { View} from 'react-native';
 import PlayButton from './playButton';
 import { NextEpButton,BackEpButton } from './nextBackButton';
 import { LeftFowardButton,RigthFowardButton } from './avancedPlayer';
-import GestureTap from './gestureTap';
 
 
 export default function MiddleButtons({status,video,nextEp,backId,progressPlay,setState,buttons}:{
@@ -38,14 +37,13 @@ export default function MiddleButtons({status,video,nextEp,backId,progressPlay,s
  return (
    
     
-  <View className='flex-row relative'>
+  <View className='flex-row '>
       <LeftFowardButton buttons={buttons} setState={setState} progressPlay={progressPlay}></LeftFowardButton>
       <BackEpButton nextEpScreen={nextEpScreen} nextEp={nextEp} ></BackEpButton>
       <PlayButton status={status} pauseOrPlayVideo={pauseOrPlayVideo}></PlayButton>
       <NextEpButton nextEp={nextEp}  nextEpScreen={nextEpScreen}></NextEpButton>
       <RigthFowardButton video={video} buttons={buttons} setState={setState} progressPlay={progressPlay}></RigthFowardButton>
 
-      <GestureTap setState={setState} buttons={buttons}></GestureTap>
     </View>
   );
 }

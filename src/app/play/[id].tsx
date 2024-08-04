@@ -45,13 +45,12 @@ export default function Player() {
    
 
     useEffect(() => {
-      console.log(status)
       if (buttons && status && status.isLoaded==true && status.isPlaying==true) {//
         let timer = setTimeout(async () => {
           setButtons(false);
           if (id && status){ await storage.setProgress(status.positionMillis,status.durationMillis,id)}
 
-        }, 5000); 
+        }, 8000); 
 
         return () => {clearTimeout(timer);};  
       }

@@ -8,8 +8,8 @@ export default function PlayButton({pauseOrPlayVideo,status}:{pauseOrPlayVideo:a
  return (
   
     <View style={[styles.play,styles.button]} >
-      <TouchableOpacity activeOpacity={0.6} onPressOut={pauseOrPlayVideo}> 
-          <View className='rounded-full p-4 justify-center items-center'  style={styles.opacity}>
+      <TouchableOpacity activeOpacity={0.6} onPressOut={pauseOrPlayVideo} style={{marginLeft:50, marginRight:50}}> 
+          <View className='rounded-full p-4 justify-center items-center '  style={styles.opacity}>
               <AntDesign name={!status || !status.isPlaying? 'caretright': "pause"} color={"white"} size={60} />
 
           </View>
@@ -24,7 +24,6 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(0,0,0,0.4)"
       },
     button:{
-      flex:1,
       justifyContent:"center",
       alignItems:"center"
     },
@@ -32,6 +31,8 @@ const styles = StyleSheet.create({
     play:{
       alignItems:"center",
       justifyContent:"center",
+      // backgroundColor:"black",
+
 
     }, 
     

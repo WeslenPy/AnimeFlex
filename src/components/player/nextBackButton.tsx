@@ -40,8 +40,8 @@ const styles = StyleSheet.create({
         backgroundColor:"rgba(0,0,0,0.4)"
     },
     buttonStep:{
-      flex:1,
       justifyContent:"center",
+      // backgroundColor:"red",
   
     },
     forwardLeft:{

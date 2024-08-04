@@ -7,6 +7,7 @@ import HideButtons from './hideButtons';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { AVPlaybackStatusSuccess, Video } from 'expo-av';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
+import GestureTap from './gestureTap';
 
 
 export default function Frame(
@@ -52,7 +53,7 @@ export default function Frame(
  return (
     <SafeAreaView style={{flex:1}}>
 
-    <View className='absolute flex h-full w-full  ' 
+    <View className='absolute flex h-full w-full relative ' 
            style={{backgroundColor:buttons? "rgba(0,0,0,0.7)":"rgba(0,0,0,0)"}}>
 
             {buttons ?
@@ -79,7 +80,9 @@ export default function Frame(
             }
 
               
+      <GestureTap setState={setState} buttons={buttons}></GestureTap>
     </View>
+
     </SafeAreaView>
 
   );

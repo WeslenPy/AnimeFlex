@@ -65,13 +65,12 @@ const doubleTap = Gesture.Tap()
 
     return (
       <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap)}>
-
-        <View style={[styles.button]}  >
+          <TouchableRipple rippleColor="rgba(255, 255, 255, .1)" style={styles.button} >
             <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],opacity:leftFoward?1:0}} >
                 <Ionicons name="reload" size={80} color="white"  />
 
             </Animated.View>
-        </View>
+        </TouchableRipple>
       </GestureDetector>
     );
 }
@@ -123,7 +122,7 @@ export  function RigthFowardButton({progressPlay,setState,buttons,video
 
 return (
   <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap)}>
-      <TouchableRipple rippleColor="rgba(255, 255, 255, .1)" style={styles.button}  onPress={() => console.log('Pressed')}>
+      <TouchableRipple rippleColor="rgba(255, 255, 255, .1)" style={[styles.button,[{zIndex:2}]]} >
           <Animated.View style={{ transform: [{rotate:rotationInterpolateRigth}],opacity:rightFoward?1:0}} >
               <Ionicons name="reload" size={80} color="white"  />
           </Animated.View>
@@ -140,6 +139,7 @@ const styles = StyleSheet.create({
       justifyContent:"center",
       height:"100%",
       alignItems:"center",
+      // backgroundColor:"white"
 
     },
    
