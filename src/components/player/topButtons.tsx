@@ -103,7 +103,7 @@ export default function TopButtons({backId,videoURL,indicator
                 <MaterialIcons name="more-vert" size={30} color="white" />
             </TouchableOpacity>
 
-           <ActionsPlayer bottomSheetRef={bottomSheetRef}></ActionsPlayer>
+           {expanded && <ActionsPlayer bottomSheetRef={bottomSheetRef}></ActionsPlayer>}
         </View>
 
         <View className='flex-row items-center justify-center'>

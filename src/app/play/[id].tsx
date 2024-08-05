@@ -16,8 +16,9 @@ import AnimeStorage from '@/src/controller/storage/manager';
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 
 import Frame from '@/src/components/player/frame';
-import BottomSheet from '@gorhom/bottom-sheet';
+import Info from '@/src/components/player/info';
 import { PaperProvider } from 'react-native-paper';
+
 
 export default function Player() {
     useKeepAwake();
@@ -33,6 +34,7 @@ export default function Player() {
 
     const [loading, setLoading] = useState(true);
     const [buttons, setButtons] = useState(true);
+    const [isFullScreen, setFullScreen] = useState(false);
 
 
     const [status,setStatus] = useState<AVPlaybackStatusSuccess>();
@@ -87,11 +89,15 @@ export default function Player() {
 
       if(result == 2){
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+        setFullScreen(true)
+
         return  setCurrentIcon(
           <FontAwesome5 name="expand" size={20} color="white" />
           )
         }else{
           ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT)
+          setFullScreen(false)
+
           return setCurrentIcon(
             <FontAwesome5 name="expand" size={20} color="white" />
           )
@@ -100,6 +106,7 @@ export default function Player() {
       
     const onReadScreenChange = useCallback((event:any)=>{
         ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+        setFullScreen(true)
         return  setCurrentIcon(
           <FontAwesome5 name="expand" size={20} color="white" />
           )
@@ -172,11 +179,11 @@ export default function Player() {
   <PaperProvider>
 
     <GestureHandlerRootView>
-        <View className='w-full h-full bg-black '   style={[styles.container]}>
+        <View className='w-full h-full bg-black '   style={[styles.container,]}>
         
           <StatusBar translucent={true} hidden={true}/>
 
-          <View className='relative h-full'>
+          <View className='relative ' style={isFullScreen?styles.landscape:styles.portrait}>
             <Video
               style={[StyleSheet.absoluteFillObject]}
               ref={video}
@@ -220,6 +227,14 @@ export default function Player() {
 
 
 const styles = StyleSheet.create({
+  portrait:{
+    height:"30%",
+
+  },
+  landscape:{
+    height:"100%"
+  },
+
   opacity:{
     backgroundColor:"rgba(0,0,0,0.4)"
   },

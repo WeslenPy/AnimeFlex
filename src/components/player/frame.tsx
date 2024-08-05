@@ -8,7 +8,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { AVPlaybackStatusSuccess, Video } from 'expo-av';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import GestureTap from './gestureTap';
-import { IndicatorAvanced } from '@/src/components/player/topButtons';
 import { useState } from 'react';
 
 export default function Frame(
@@ -39,7 +38,7 @@ export default function Frame(
         if (newPosition >= status.durationMillis) {
             newPosition = status.durationMillis; 
         }
-        console.log("new position",newPosition)
+
         status.positionMillis = newPosition
         await video.setPositionAsync(newPosition);
 
