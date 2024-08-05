@@ -56,8 +56,6 @@ export default function Anime() {
 
     })
 
-    console.log(data_cat)
-
 
     setPaginated(data_cat.slice(0, ITEMS_PER_PAGE));
     setEpsodies(data_cat);
