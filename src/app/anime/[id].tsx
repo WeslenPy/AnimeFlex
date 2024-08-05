@@ -1,4 +1,4 @@
-import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl, ActivityIndicator } from 'react-native';
+import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl, ActivityIndicator,Image} from 'react-native';
 import React, { useEffect,useState,useRef, useCallback } from 'react';
 
 import {useLocalSearchParams } from 'expo-router';
@@ -9,6 +9,8 @@ import * as ScreenOrientation from 'expo-screen-orientation';
 import { Feather, Fontisto,AntDesign } from '@expo/vector-icons';
 import { openScreenPlayer, }  from '@/src/utils/screen';
 import StatusBarPadding from "@/src/components/header/statusbar";
+import manager from "@/src/controller/api/animetv/urls";
+
 
 export default function Anime() {
 
@@ -19,7 +21,6 @@ export default function Anime() {
   const [info,setInfo] = useState<InfoProps>();
   const [refreshing, setRefreshing] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
   const [page, setPage] = useState(1);
   
   const H_MAX_HEIGHT= 210;
@@ -37,6 +38,7 @@ export default function Anime() {
     extrapolate:"clamp",
   })
 
+  let url = new manager.URLManager()
   const session = new SessionManager()
 
   async function getEpsodies(){
@@ -46,23 +48,27 @@ export default function Anime() {
 
     data_cat.forEach((item:EpsodiesProps,index:number)=>{
         data_cat[index].index_id=index
-        if (index!=0){
-          data_cat[index].back_ep=data_cat[index].video_id
+        if (index>0 && index <=data_cat.length){
+          data_cat[index].back_ep=data_cat[index-1].video_id
+          data_cat[index].back_id=index-1
         }
+
 
     })
 
+    console.log(data_cat)
+
 
     setPaginated(data_cat.slice(0, ITEMS_PER_PAGE));
-
-
-
     setEpsodies(data_cat);
   }
 
+
+ 
+
   async function getInfo(){
     let url_info = session.router_info(id)
-    const data_info = await session.get(url_info)
+    const data_info:InfoProps[] = await session.get(url_info)
     setInfo(data_info[0]);
 
 
@@ -104,8 +110,6 @@ export default function Anime() {
           const startIndex = paginated.length;
           let endIndex = Math.min(startIndex + ITEMS_PER_PAGE, epsodies.length);
 
-          console.log(endIndex,epsodies.length)
-          
           const newDisplayedData = epsodies.slice(startIndex, endIndex);
           setPaginated(prevData => [...prevData, ...newDisplayedData]);
 
@@ -142,11 +146,15 @@ export default function Anime() {
   return (
     <View className="bg-black w-full relative h-full"  >
       <StatusBarPadding></StatusBarPadding>
-      
+     
 
       <Animated.View className='mt-5 text-white p-5  absolute z-50 top-5 left-0 right-0 bg-black overflow-hidden' style={{height:headerScrollHeight}}>
         {info ?
           <View className='flex flex-col'>
+             {/* <View className=' h-48 w-full justify-center items-center' >
+                <Image source={{uri:url.router_image(info.category_image)}}  className='h-44 w-44 rounded-full bg-white ' resizeMode={"stretch"}/>
+            </View> */}
+
             <Text className='text-white text-3xl mb-2' onLayout={(event)=>{let { height } = event.nativeEvent.layout;H_MIN_HEIGHT=height+10}}>{info.category_name}</Text>
             <Text className='text-white mb-2'>•<Text className='text-green-600'> Série </Text>• | Ano {info.ano} </Text>
 

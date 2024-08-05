@@ -2,6 +2,7 @@ import { ManagerDecrypt } from "./decrypt";
 
 
 class ResponseManager extends ManagerDecrypt {
+    URLManager: any;
 
     parse(result: any) {
         let data = result[0]

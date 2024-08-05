@@ -26,28 +26,10 @@ export default function Layout() {
   
   const { success, error } = useMigrations(db, migrations);
 
-  if (error) {
-    return (
-      <View>
-        <Text>Migration error: {error.message}</Text>
-      </View>
-    );
-  }
-
-  if (!success) {
-    return (
-      <View>
-        <Text>Migration is in progress...</Text>
-      </View>
-    );
-  }
-
   const config ={
     headerShown: false,
     statusBarTranslucent:true 
   }
-
- 
 
   return (
     

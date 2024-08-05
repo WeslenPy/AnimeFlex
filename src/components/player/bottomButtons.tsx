@@ -19,7 +19,7 @@ export default function BottomButtons(
                 {currentIcon}
             </TouchableOpacity>
         </View>
-        <View className='flex-row mb-10 mx-3 ml-3'>
+        <View className='flex-row mb-5 mx-3 ml-3'>
             <Text className='text-white'>{formatTime(status?status.positionMillis:0)}</Text>
 
             <Slider minimumValue={0} maximumValue={status?status.durationMillis:0}

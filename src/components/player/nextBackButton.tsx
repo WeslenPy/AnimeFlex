@@ -22,7 +22,7 @@ export  function BackEpButton({nextEp,nextEpScreen}:{nextEp:EpsodiesProps|undefi
  return (
   <View style={styles.buttonStep}>
       <TouchableOpacity style={[styles.forwardLeft,{opacity:nextEp?.back_ep?1:0.4}]} 
-                      activeOpacity={0.6} onPressOut={()=>{nextEp && nextEp?nextEpScreen(nextEp.back_ep):null}}>
+                      activeOpacity={0.6} onPressOut={()=>{nextEp && nextEp.back_ep?nextEpScreen(true):null}}>
       <View className='rounded-full p-4' style={styles.opacity}>
           <AntDesign name="stepbackward" size={25} color="white" />
       </View>

@@ -105,7 +105,6 @@ class AnimeStorage extends Keys{
     async setProgress(actualMilles:any,finishMilles:any,videoId:string):Promise<Object>{
         if (finishMilles === 0) return await this.save(videoId,{"progress":0,"positionActual":actualMilles}); 
         const progress = (actualMilles / finishMilles) * 100;
-        console.log(progress.toFixed(2))
         return await this.save(videoId,{"progress":progress > 100 ? 100 : parseInt(progress.toFixed(2)),"positionActual":actualMilles}); 
     }
 

@@ -19,6 +19,7 @@ export interface CategoryProps{
   
 export interface EpsodiesProps{
     back_ep?:number|string
+    back_id?:number
     category_id:string;
     video_id:string;
     title:string;

@@ -61,7 +61,6 @@ export default function Preview({reference,anime}:{reference:any,anime:AnimeProp
 
       }
       catch(error){
-        console.log(error)
         setFaild(true)
       }
 

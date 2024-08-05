@@ -13,20 +13,29 @@ export default function MiddleButtons({status,video,nextEp,backId,progressPlay,s
                                   nextEp:EpsodiesProps|undefined,backId:string|undefined,
                                   progressPlay:any,setState:any,buttons:boolean,setIndicator:any}) {
   
-    function nextEpScreen(video_id:number|string){
-      if(!video_id){
-          if(nextEp && nextEp.video_id){
-            video_id = nextEp.video_id
-          
-          }
+    function nextEpScreen(backEp=false){
+
+      console.log(nextEp)
+
+
+      if (nextEp && video){
+        let video_id = nextEp.video_id
+        let index_id = nextEp.index_id
+
+        if(backEp ===true ){
+            video_id = nextEp.back_ep? nextEp.back_ep.toString() :""
+            index_id = nextEp.back_id? nextEp.back_id :0
         }
 
-        if (video_id && video && nextEp){
-            video.pauseAsync()
-            openScreenPlayer(video_id,nextEp.index_id.toString(),backId)
+        video.pauseAsync()
 
-        }
+        console.log(video_id,index_id)
+        openScreenPlayer(video_id,index_id.toString(),backId)
+
+
+     }
       }
+
   
       
     function pauseOrPlayVideo(){

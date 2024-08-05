@@ -55,7 +55,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
       },[]);
   
     return (
-            <Pressable className=' flex rounded-md justify-start mx-1' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page);}}>
+            <Pressable className=' flex rounded-md justify-start mx-1' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page,true);}}>
                 <View className='flex-row '>
                     <View className='flex-col  mr-2 p-1 mt-1 rounded-lg'>
                         <View className='h-32 w-32 rounded-lg relative mx-1' style={{backgroundColor:"rgba(255,255,255,0.1)"}}>

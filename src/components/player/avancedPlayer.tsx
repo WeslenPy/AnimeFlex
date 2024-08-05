@@ -65,7 +65,7 @@ export  function LeftFowardButton({progressPlay,setState,buttons}:{progressPlay:
 
     return (
       <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap)}>
-          <TouchableRipple rippleColor="rgba(255, 255, 255, .2)" style={styles.button} onPress={()=>{}} >
+          <TouchableRipple rippleColor="rgba(255, 255, 255, .2)" style={styles.button}  >
             <Animated.View style={{ transform: [{ scaleX: -1 },{rotate:rotationInterpolateLeft}],opacity:leftFoward?1:0}} >
                 <Ionicons name="reload" size={80} color="white"  />
 
@@ -136,7 +136,7 @@ export  function RigthFowardButton({progressPlay,setState,buttons,video,setIndic
 
 return (
   <GestureDetector  gesture={Gesture.Exclusive(doubleTap, singleTap,longTap)}>
-      <TouchableRipple rippleColor="rgba(255, 255, 255, .2)" style={[styles.button]} onPress={()=>{}} >
+      <TouchableRipple rippleColor="rgba(255, 255, 255, .2)" style={[styles.button]}  >
           <Animated.View style={{ transform: [{rotate:rotationInterpolateRigth}],opacity:rightFoward?1:0}} >
               <Ionicons name="reload" size={80} color="white"  />
           </Animated.View>

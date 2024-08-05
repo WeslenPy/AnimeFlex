@@ -129,14 +129,15 @@ export default function Player() {
           if (currentIndex <data_cat.length-1 ){
 
             let newIndex = currentIndex+1
-            let dataCurrent =  data_cat[newIndex]
   
             data_cat[newIndex].index_id=newIndex
-            if (currentIndex!=0){
-              data_cat[newIndex].back_ep=dataCurrent.video_id
+
+            if (currentIndex>0 && currentIndex <=data_cat.length){
+              data_cat[newIndex].back_ep=data_cat[currentIndex-1].video_id
+              data_cat[newIndex].back_id=currentIndex-1
             }
-            nextEp.current= data_cat[currentIndex+1]
-              
+            nextEp.current= data_cat[newIndex]
+            console.log(nextEp.current)
           }
         }
 
@@ -151,6 +152,8 @@ export default function Player() {
     function nextEpScreen(){
       if(nextEp.current && nextEp.current.index_id && video.current){
         video.current.pauseAsync()
+        video.current.stopAsync()
+        // video.current.unloadAsync()
         openScreenPlayer(nextEp.current.video_id,nextEp.current.index_id.toString(),back_id)
       }
     }
