@@ -115,6 +115,7 @@ export default function Player() {
 
     useEffect(() => {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
+      setFullScreen(true)
 
       async function getURL(id:any){
         let session = new SessionManager()
@@ -197,6 +198,7 @@ export default function Player() {
               isLooping={false}
               onFullscreenUpdate={onFullscreenChange}
               onPlaybackStatusUpdate={setPausedCallback}
+              
               volume={1.0}
               >
               </Video>
@@ -214,9 +216,10 @@ export default function Player() {
                 ></Frame>
 
 
-            
-
           </View>
+          {!isFullScreen &&
+          <Info ></Info>
+          }
           
         </View>
       </GestureHandlerRootView>
