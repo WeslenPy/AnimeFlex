@@ -5,6 +5,7 @@ import { drizzle } from "drizzle-orm/expo-sqlite";
 import * as historySchema from "@/src/controller/database/schemas/historySchema";
 import * as animeSchema from "@/src/controller/database/schemas/animeSchema";
 import * as favoritesSchema from "@/src/controller/database/schemas/favoritesSchema";
+import * as thumbnailSchema from "@/src/controller/database/schemas/thumbnailSchema";
 import { eq } from "drizzle-orm";
 
 
@@ -51,6 +52,20 @@ export class AnimeQuery{
         return {}
     }
 
+    async addThumb(video_id:number,uri:string) {
+        try{
+            const context = this.getContext()
+            const db = drizzle(context,{schema:thumbnailSchema})
+        
+            const response = await db.insert(thumbnailSchema.thumbTable).values({video_id:video_id,uri:uri})
+            return response
+            
+        }catch(error){
+
+            console.log(error)
+        }
+    }    
+    
     async addFavorite(anime:AnimeProps) {
         try{
             await this.animeAddNotExists(anime)
@@ -85,6 +100,24 @@ export class AnimeQuery{
             return null
         }
     }
+    
+    async getThumb(video_id:number) {
+        try{
+            const context = this.getContext()
+            const db = drizzle(context,{schema:thumbnailSchema})
+        
+            const response = await db.select({uri:thumbnailSchema.thumbTable.uri}
+                                                ).from(thumbnailSchema.thumbTable
+                                                ).where(eq(thumbnailSchema.thumbTable.video_id,video_id))
+            return response
+            
+        }catch(error){
+
+            console.log(error)
+
+            return null
+        }
+    }
 
     async removeFavorite(anime:AnimeProps) {
         try{
@@ -94,7 +127,7 @@ export class AnimeQuery{
             
             const response = await db.delete(favoritesSchema.favoritesTable).where(
                 eq(favoritesSchema.favoritesTable.anime_id,parseInt(anime.id))
-            )
+            ).execute()
 
             return response
     

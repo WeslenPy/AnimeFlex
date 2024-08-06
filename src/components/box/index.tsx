@@ -74,7 +74,7 @@ export function BoxHistory({anime,state,setState,remove
 
             const result = await storage.getFavorite(anime)
 
-            if (result){
+            if (result && result.length>0){
                 setFavorite(true)
             }else{setFavorite(false)}
 
@@ -100,7 +100,7 @@ export function BoxHistory({anime,state,setState,remove
                
             </View>
             <View className='flex-row justify-end items-end gap-2 mb-3'>
-                <TouchableOpacity onPress={addFavorite}>
+                <TouchableOpacity onPressOut={addFavorite}>
                     {favorite? (
                         <AntDesign name="heart" size={24} color="white" />
                         ):(
@@ -111,7 +111,7 @@ export function BoxHistory({anime,state,setState,remove
 
                 {!remove && (
 
-                    <TouchableOpacity onPress={deleteItem}>
+                    <TouchableOpacity onPressOut={deleteItem}>
                         <Feather name="trash" size={24} color="red" />
                     </TouchableOpacity>
 

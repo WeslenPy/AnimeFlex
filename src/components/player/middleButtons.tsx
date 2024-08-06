@@ -15,9 +15,6 @@ export default function MiddleButtons({status,video,nextEp,backId,progressPlay,s
   
     function nextEpScreen(backEp=false){
 
-      console.log(nextEp)
-
-
       if (nextEp && video){
         let video_id = nextEp.video_id
         let index_id = nextEp.index_id
@@ -28,8 +25,6 @@ export default function MiddleButtons({status,video,nextEp,backId,progressPlay,s
         }
 
         video.pauseAsync()
-
-        console.log(video_id,index_id)
         openScreenPlayer(video_id,index_id.toString(),backId)
 
 

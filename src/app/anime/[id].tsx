@@ -1,35 +1,103 @@
-import { View,FlatList,Text,ScrollView,Pressable,Animated, RefreshControl, ActivityIndicator,Image} from 'react-native';
-import React, { useEffect,useState,useRef, useCallback } from 'react';
-
+import { View,Text,ScrollView,Pressable,Animated,StyleSheet,TouchableOpacity, StyleProp} from 'react-native';
+import React, { useEffect,useState,useRef } from 'react';
 import {useLocalSearchParams } from 'expo-router';
 import {SessionManager} from "@/src/controller/api/animetv/session";
-import { EpsodiesProps, InfoProps } from "../../interfaces/anime";
+import { AnimeProps, EpsodiesProps, InfoProps } from "../../interfaces/anime";
 import Epsodie from '@/src/components/epsodies';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import { Feather, Fontisto,AntDesign } from '@expo/vector-icons';
+import { Feather, AntDesign, Octicons, Ionicons } from '@expo/vector-icons';
 import { openScreenPlayer, }  from '@/src/utils/screen';
 import StatusBarPadding from "@/src/components/header/statusbar";
 import manager from "@/src/controller/api/animetv/urls";
+import FlatPaginated from '@/src/components/flat/paginated';
+import { AnimeQuery } from '@/src/controller/storage/database';
+import OrdenateSheet from '@/src/components/sheet';
+import BottomSheet from '@gorhom/bottom-sheet';
+import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { PaperProvider } from 'react-native-paper';
+
+
+
+const H_MAX_HEIGHT= 210;
+
+export function Ordenation({style,epsodies,setData}:{style:StyleProp<any>,epsodies:any,setData:any}){
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
+
+  function showSheetOrdenate(){
+    
+    if (bottomSheetRef.current){
+      const preview:BottomSheetMethods = bottomSheetRef.current
+      preview.snapToIndex(0)
+  }
+  }
+
+
+  return (
+        <View className='flex-row justify-between w-full mt-5 p-2 rounded-lg' style={[style, { backgroundColor:"#222B32"}]}>
+          <TouchableOpacity onPressOut={showSheetOrdenate}>
+            <View className='mx-2'>
+              <Ionicons name="filter-sharp" size={24} color="white" />
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <View className='flex-row justify-center items-center gap-3 mx-2'>
+              <Text className='text-white text-lg font-bold'> SINC. TODOS</Text>
+              <Octicons name="download" size={24} color="white" />
+            </View>
+          </TouchableOpacity>
+
+          <OrdenateSheet setData={setData} reference={bottomSheetRef} data={epsodies} ></OrdenateSheet>
+
+      </View>
+  )
+}
+
 
 
 export default function Anime() {
 
   const {id} = useLocalSearchParams<{id:string}>();
 
-  const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
-  const [paginated,setPaginated] = useState<EpsodiesProps[]>([]);
-  const [info,setInfo] = useState<InfoProps>();
-  const [refreshing, setRefreshing] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(1);
+  const storage = new AnimeQuery()
   
-  const H_MAX_HEIGHT= 210;
+  const [epsodies,setEpsodies] = useState<EpsodiesProps[]>([]);
+  const [info,setInfo] = useState<InfoProps>();
+  const [star,setStar] = useState(false);
+
+  const flipAnim = useRef(new Animated.Value(0)).current;
+
+  const frontInterpolate = flipAnim.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['0deg', '180deg'],
+  });  
+  
+  const backInterpolate = flipAnim.interpolate({
+    inputRange: [0, 180],
+    outputRange: ['180deg', '360deg'],
+  });
+
+  const flipToFront = () => {
+    Animated.timing(flipAnim, {
+      toValue: 180,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  };
+  
+const flipToBack = () => {
+    Animated.timing(flipAnim, {
+      toValue: 0,
+      duration: 800,
+      useNativeDriver: true,
+    }).start();
+  };
+  
   var H_MIN_HEIGHT= useRef(80).current;
   const H_SCROLL_DISTANCE= H_MAX_HEIGHT-H_MIN_HEIGHT;
 
 
-  const ITEMS_PER_PAGE = 4;
-  
   const scrollOffSetY = useRef(new Animated.Value(0)).current;
 
   const headerScrollHeight = scrollOffSetY.interpolate({
@@ -56,26 +124,31 @@ export default function Anime() {
 
     })
 
-
-    setPaginated(data_cat.slice(0, ITEMS_PER_PAGE));
     setEpsodies(data_cat);
   }
 
+  function getAnime(){
+    if (info){
+      let anime:AnimeProps = {category_image:info.category_image,
+                              category_name:info.category_name,
+                              id:info.id,video_id:"0",}
+        return anime
+    }
+  }
 
- 
+  async function addHistory(){
+    let anime = getAnime()
+    if (anime){
+      await storage.addHistory(anime)
+    }
+}
 
   async function getInfo(){
     let url_info = session.router_info(id)
     const data_info:InfoProps[] = await session.get(url_info)
     setInfo(data_info[0]);
-
-
   }
   
-  const onRefresh = useCallback(() => {
-    getEpsodies();  
-  }, []);
-
 
   useEffect(()=>{
     try{
@@ -88,64 +161,56 @@ export default function Anime() {
   
   },[])
 
+ 
+
+  async function getFavorite(){
+    let anime = getAnime()
+    if (anime){
+      let find = await storage.getFavorite(anime)
+      if (find && find.length>0){
+        setStar(true)
+      }else{
+        setStar(false)
+      }
+
+    }
+
+  }
+
+  
+
+  function addFavorite(){
+    let anime = getAnime()
+    if (anime && !star){
+      flipToFront()
+      storage.addFavorite(anime)
+      setStar(true)
+      
+    }else if (anime){
+      flipToBack()
+      setStar(false)
+      storage.removeFavorite(anime)
+    }
+
+
+  }
+
+
+
   useEffect(()=>{
     ScreenOrientation.unlockAsync();
     ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL);
+    addHistory()
+    getFavorite()
 
-  })
-
-    useEffect(() => {
-      loadMoreData();
-    }, [page]);
-
-  const loadMoreData = () => {
-      if (loading) return;
-      setLoading(true);
-
-      let timeouted = setTimeout(() => {
-
-        if(epsodies.length>0){
-          const startIndex = paginated.length;
-          let endIndex = Math.min(startIndex + ITEMS_PER_PAGE, epsodies.length);
-
-          const newDisplayedData = epsodies.slice(startIndex, endIndex);
-          setPaginated(prevData => [...prevData, ...newDisplayedData]);
-
-          
-        }
-    
-        setLoading(false);
-
-    },1500)
-
-    return ()=>clearTimeout(timeouted);
-    
-  };
-
-  
-  const renderFooter = () => {
-    if (!loading && paginated.length >= epsodies.length) {return null}
-
-    return (
-      <View className='p-5'>
-        <ActivityIndicator size="large" color="orange" />
-      </View>
-    );
-  };
-
-  const handleLoadMore = () => {
-    if (!loading && paginated.length < epsodies.length) {
-      setPage(prevPage => prevPage + 1);
-    }
-  };
-
+  },[info])
 
 
   return (
+    <PaperProvider>
     <View className="bg-black w-full relative h-full"  >
       <StatusBarPadding></StatusBarPadding>
      
-
       <Animated.View className='mt-5 text-white p-5  absolute z-50 top-5 left-0 right-0 bg-black overflow-hidden' style={{height:headerScrollHeight}}>
         {info ?
           <View className='flex flex-col'>
@@ -157,7 +222,7 @@ export default function Anime() {
             <Text className='text-white mb-2'>•<Text className='text-green-600'> Série </Text>• | Ano {info.ano} </Text>
 
             {info.category_description.length>0?
-            <ScrollView >
+            <ScrollView className='bg-black' >
               <Text className='text-white text-xl '>{info.category_description}</Text>
 
             </ScrollView>:<></>
@@ -169,24 +234,16 @@ export default function Anime() {
         }
       </Animated.View>
 
-      
-      <View style={{marginBottom:120,marginTop:30}}>
-          <FlatList ListEmptyComponent={<></>} onEndReachedThreshold={0.1} ListFooterComponent={renderFooter}
-                     refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}  onEndReached={handleLoadMore} 
-                        contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 
-                        showsHorizontalScrollIndicator={true} showsVerticalScrollIndicator={true} horizontal={false} 
-                        data={paginated} scrollEventThrottle={16} onScroll={Animated.event([
-                          {nativeEvent:{
-                            contentOffset:
-                            {y:scrollOffSetY}
-                            }
-                          },
-                        ],{useNativeDriver:false}
-                        )}
+
+
+        <View style={{marginBottom:100}}>
+          
+          <FlatPaginated refreshCallBack={getEpsodies} styling={styles.flat} perPage={4} horizontal={false} timingPage={1000}
+                        data={epsodies}  renderTop={<Ordenation setData={setEpsodies} epsodies={epsodies} style={{marginTop:H_MAX_HEIGHT+20}}></Ordenation>}
+                        eventListener={Animated.event([ {nativeEvent:{contentOffset:{y:scrollOffSetY}}},],{useNativeDriver:false})}
                         renderItem={({item})=><Epsodie ep={item} page={id}></Epsodie>}/>
 
-
-      </View>
+        </View>
 
         
       <View className='absolute bottom-0 left-0 right-0 z-50'>
@@ -198,10 +255,10 @@ export default function Anime() {
             </View>
           </Pressable> 
           
-          <Pressable className='w-16 bg-orange-400 rounded-md p-2' onPress={()=>{epsodies? openScreenPlayer(epsodies[0].video_id,epsodies[0].index_id.toString(),id):null;}}>
-            <View className='flex-row justify-center items-center align-middle'>
-              <AntDesign name="staro" size={30} color="white" />
-            </View>
+          <Pressable className='w-16 bg-orange-400 rounded-md p-2' onPress={addFavorite}>
+            <Animated.View className='flex-row justify-center items-center align-middle' style={{ transform: [{ rotateY: !star? frontInterpolate:backInterpolate }] }} >
+              <AntDesign name={star?"star":"staro"} size={30} color={star?"yellow":"white"} />
+            </Animated.View>
           </Pressable>
 
         </View>
@@ -209,5 +266,17 @@ export default function Anime() {
        
     </View>
 
-  );
+</PaperProvider>
+);
 }
+
+
+
+const styles = StyleSheet.create({
+  flat:{
+    gap:16,
+    backgroundColor:"black",
+    marginLeft:10,
+    marginRight:10,
+  }
+})

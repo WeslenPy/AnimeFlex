@@ -16,8 +16,6 @@ export default function Layout() {
   const context = new AnimeQuery()
   const { success, error } = useMigrations(context.db, migrations);
 
-  console.log(success)
-
   const config ={
     headerShown: false,
     statusBarTranslucent:true 
@@ -27,17 +25,14 @@ export default function Layout() {
 
   return (
     
-    <SQLiteProvider databaseName={context.DATABASE_NAME}>
-      <GestureHandlerRootView style={{ flex: 1 }}>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={config} />
-            <Stack.Screen name="(viewer)" options={config} />
-            <Stack.Screen name="anime/[id]" options={config} />
-            <Stack.Screen  name="play/[id]" options={{ ...config,statusBarHidden:true}} />
-          </Stack>
-      </GestureHandlerRootView>
+    <GestureHandlerRootView style={{ flex: 1,backgroundColor:"black" }}>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={config} />
+          <Stack.Screen name="(viewer)" options={config} />
+          <Stack.Screen name="anime/[id]" options={config} />
+          <Stack.Screen  name="play/[id]" options={{ ...config,statusBarHidden:true}} />
+        </Stack>
+    </GestureHandlerRootView>
 
-
-    </SQLiteProvider>
   );
 }

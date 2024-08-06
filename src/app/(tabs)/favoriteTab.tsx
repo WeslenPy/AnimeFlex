@@ -23,9 +23,9 @@ export default function FavoriteTab() {
 
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    { key: 'favorites', title: 'Favorites',icon:"favorite" },
-    { key: 'history', title: 'History',icon:"history" },
-    { key: 'offline', title: 'Offline',icon:"cloud-down" },
+    { key: 'favorites', title: 'Favoritos',icon:"favorite" },
+    { key: 'history', title: 'Assistidos',icon:"history" },
+    { key: 'offline', title: 'Off-line',icon:"cloud-down" },
   ]);
 
 

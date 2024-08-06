@@ -8,6 +8,9 @@ import { AnimeProps} from '@/src/interfaces/anime';
 import Preview from '../preview';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
+import FlatPaginated from './paginated';
+
+
 export default function Flat({config}:{config:FlatProps}) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [sheet,setSheet]  = useState<AnimeProps>()
@@ -20,8 +23,7 @@ export default function Flat({config}:{config:FlatProps}) {
 
         <View className='text-xl mb-5 mt-5'><Text className='text-slate-100'>{config.title}</Text></View>
 
-        <FlatList ListEmptyComponent={ <ActivityIndicator size={50} color="orange" />} contentContainerStyle={{gap:16}} showsHorizontalScrollIndicator={false} 
-                  showsVerticalScrollIndicator={false} horizontal={true} 
+        <FlatPaginated empty={ <ActivityIndicator size={50} color="orange" />} styling={{gap:16}}  horizontal={true} perPage={6} timingPage={500}
                   data={config.variavel} renderItem={({item})=><Card reference={bottomSheetRef} setState={setSheet}  anime={item}></Card >}/>
 
 

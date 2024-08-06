@@ -53,7 +53,7 @@ export function Slider() {
 
 
  return (
-    <View className='w-full mt-4 m-4 mb-5 h-full'>
+    <View className='w-full mt-4 m-0 mb-5 h-full'>
 
       {loading?
         <View className='items-center justify-center  p-10'>

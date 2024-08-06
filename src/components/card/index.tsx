@@ -56,9 +56,7 @@ export function Card({anime,setState,reference}:{anime:AnimeProps,setState:any,r
     }
 
 
-    async function addHistory(){
-        await storage.addHistory(anime)
-    }
+
 
     function handleDoubleTapStart(){
         storage.addFavorite(anime)
@@ -67,7 +65,6 @@ export function Card({anime,setState,reference}:{anime:AnimeProps,setState:any,r
     }
 
     function handleSingleTapStart(){
-        addHistory();
         if(anime.id){ openScreenAnime(anime.id)}
         else{ openScreenPlayer(anime.video_id,"","")}
 
@@ -97,7 +94,7 @@ export function Card({anime,setState,reference}:{anime:AnimeProps,setState:any,r
     return (
 
       <GestureDetector   gesture={Gesture.Exclusive(doubleTap, singleTap,longTap)}>
-            <View className='flex flex-col items-center relative' >
+            <View className='flex flex-col items-center relative justify-center' >
                                                                     
                 <View className=' rounded-md' style={{backgroundColor:"rgba(255,255,255,0.3)"}}>
                     <Image className='w-44 h-80 rounded-md' progressiveRenderingEnabled={true}  source={{uri:url.router_image(anime.category_image)}} />

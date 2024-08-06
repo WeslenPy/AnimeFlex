@@ -49,7 +49,7 @@ export default function Fav() {
       <FlatList  
           ListFooterComponent={<View className='mb-10'></View>}
           refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          contentContainerStyle={{gap:16,marginBottom:50}} 
+          contentContainerStyle={{gap:5,marginBottom:50}} 
           showsHorizontalScrollIndicator={false} keyExtractor={(item,index)=>{return index.toString()}}  
         showsVerticalScrollIndicator={true} horizontal={false} data={fav} 
         renderItem={({item})=><BoxHistory anime={item} state={fav} setState={setFav} remove={true}></BoxHistory>}/>

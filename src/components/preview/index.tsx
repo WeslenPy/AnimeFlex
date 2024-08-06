@@ -111,6 +111,7 @@ export default function Preview({reference,anime}:{reference:any,anime:AnimeProp
             index={-1}
             enablePanDownToClose={true}
             snapPoints={snapPoints}
+            handleIndicatorStyle={{backgroundColor:"white"}}
             backgroundStyle={{backgroundColor:"#24252A"}}>
                   <BottomSheetView style={styles.contentContainer}>
                     <View className='flex-row justify-end items-end w-full '>

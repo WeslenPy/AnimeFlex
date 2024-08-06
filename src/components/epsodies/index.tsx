@@ -1,17 +1,19 @@
-import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet } from 'react-native';
+import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet, TouchableOpacity } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
 import {openScreenPlayer} from '@/src/utils/screen';
-import { Feather } from '@expo/vector-icons';
+import { Feather, Octicons } from '@expo/vector-icons';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { useState,useEffect } from 'react';
 import { SessionManager } from '@/src/controller/api/animetv/session';
 import response from "@/src/controller/api/animetv/response";
 import AnimeStorage from '@/src/controller/storage/manager';
+import { AnimeQuery } from '@/src/controller/storage/database';
 
 
 export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
     const storage = new AnimeStorage()
+    const storageDatabase = new AnimeQuery()
 
     const [image, setImage] = useState("");
     const [progress, setProgress] = useState(0);
@@ -36,16 +38,26 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
         async function getURL(id:any){
 
-          let session = new SessionManager()
-          let url = session.router_ep(id)
-          let data = await session.get(url)
-          data = manager.parse(data);
+            let session = new SessionManager()
+            let url = session.router_ep(id)
+            let data = await session.get(url)
+            data = manager.parse(data);
 
+
+
+            let find = await storageDatabase.getThumb(parseInt(ep.video_id))
+
+            if(find && find.length>0){
+                setImage(find[0].uri);
+
+            }else{
+                const { uri } = await VideoThumbnails.getThumbnailAsync(data.urls[data.urls.length-1], {time: getRandomInt(15000,50000)});
+                storageDatabase.addThumb(parseInt(ep.video_id),uri)
+                setImage(uri);
+
+            }
           
-          const { uri } = await VideoThumbnails.getThumbnailAsync(data.urls[data.urls.length-1], {time: getRandomInt(15000,50000)});
-          setImage(uri);
 
-         
 
         }
 
@@ -71,9 +83,14 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                             </View>
                         </View>
                     </View>
-                    <View className='flex-row items-center justify-between flex-1 mr-5'>
+                    <View className='flex-row items-center justify-between flex-1 mr-4'>
                         <Text className='text-white  w-44 mr-10 '>{ep.title}</Text>
-                        <Feather name="play-circle"  size={30} color="orange" />
+                        <View className='flex-row h-full items-end mb-4'>
+                            <TouchableOpacity>
+                                <Octicons name="download" size={26} color="white" />
+                            </TouchableOpacity>
+
+                        </View>
                     </View>
 
                 </View>

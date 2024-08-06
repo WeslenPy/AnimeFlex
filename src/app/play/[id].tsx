@@ -145,7 +145,6 @@ export default function Player() {
               data_cat[newIndex].back_id=currentIndex-1
             }
             nextEp.current= data_cat[newIndex]
-            console.log(nextEp.current)
           }
         }
 
@@ -198,7 +197,6 @@ export default function Player() {
               isLooping={false}
               onFullscreenUpdate={onFullscreenChange}
               onPlaybackStatusUpdate={setPausedCallback}
-              
               volume={1.0}
               >
               </Video>

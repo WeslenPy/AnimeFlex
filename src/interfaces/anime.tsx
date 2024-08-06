@@ -33,6 +33,7 @@ export interface InfoProps{
     category_name:string;
     category_image:string;
     category_genres:string;
+    video_id?:string;
     count:string;
     ano:string;
     off:string;
