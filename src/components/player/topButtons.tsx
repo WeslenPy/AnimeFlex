@@ -16,9 +16,9 @@ export function IndicatorAvanced({indicator}:{indicator:boolean}){
     if (!indicator){return null}
 
     return (
-        <View className='p-2 rounded-full' style={{backgroundColor:"rgba(0,0,0,0.8)"}}>
-            <View className='flex-row justify-center items-center'>
-                <Text className='text-white text-lg mx-4'>2x </Text>
+        <View className='p-2 rounded-full absolute' style={{backgroundColor:"rgba(0,0,0,0.8)",left:"50%",top:"10%"}}>
+            <View className='flex-row justify-center items-center mx-4'>
+                <Text className='text-white text-lg mx-2'>2x </Text>
                 <AntDesign name={'caretright'} color={"white"} size={10} />
                 <AntDesign name={'caretright'} color={"white"} size={10} />
             </View>
@@ -104,13 +104,7 @@ export default function TopButtons({backId,videoURL,indicator
             </TouchableOpacity>
 
            {expanded && <ActionsPlayer bottomSheetRef={bottomSheetRef}></ActionsPlayer>}
-        </View>
-
-        <View className='flex-row items-center justify-center'>
-            <IndicatorAvanced  indicator={indicator}></IndicatorAvanced>
-
-        </View>
-       
+        </View>       
 
     </View>
 

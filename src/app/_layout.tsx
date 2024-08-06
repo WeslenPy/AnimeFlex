@@ -19,10 +19,7 @@ const db = drizzle(expoDB);
 
 
 export default function Layout() {
-  useEffect(() => {
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL);
-     
-  },[]);
+
   
   const { success, error } = useMigrations(db, migrations);
 

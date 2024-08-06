@@ -10,7 +10,7 @@ export function Header({config}:{config:HeaderProps}) {
     return (
         <View >
             <StatusBarPadding></StatusBarPadding>
-            <View className='w-full flex flex-row justify-between bg-slate-700 rounded-full mt-2'>
+            <View className='w-full flex flex-row justify-between rounded-full mt-2' style={{backgroundColor:"rgba(255,255,255,0.2)"}}>
                 <TextInput  className="w-80 text-slate-300 ml-4"
                             placeholder="Pesquise aqui..."  
                             placeholderTextColor="white"

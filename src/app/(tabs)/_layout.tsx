@@ -26,11 +26,17 @@ export default function RootLayout() {
 
   return (
 
-    <Tabs screenOptions={{tabBarActiveBackgroundColor:config.headerTintColor,
+    
+
+    <Tabs  screenOptions={{
+                    
+                    tabBarActiveBackgroundColor:config.headerTintColor,
                     tabBarInactiveBackgroundColor:config.tabBarActiveBackgroundColor,
                     tabBarStyle:{backgroundColor:config.headerTintColor,height:60,paddingBottom:8}}} >
+
+
       <Tabs.Screen name="index" 
-      
+
             options={{
               ...options,
               title:"Home",
@@ -41,8 +47,8 @@ export default function RootLayout() {
 
     <Tabs.Screen name="favoriteTab" 
             options={{
-              headerTransparent:true,
               ...options,
+              headerTransparent:true,
               title:"Favoritos",
               tabBarIcon:({focused,color,size})=>{
                 return  <Ionicons name="bookmark-outline" size={size} color={color}/>

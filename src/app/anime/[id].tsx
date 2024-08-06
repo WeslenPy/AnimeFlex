@@ -157,8 +157,8 @@ export default function Anime() {
             <Text className='text-white mb-2'>•<Text className='text-green-600'> Série </Text>• | Ano {info.ano} </Text>
 
             {info.category_description.length>0?
-            <ScrollView className='h-60'>
-              <Text className='text-white text-xl mb-4'>{info.category_description}</Text>
+            <ScrollView >
+              <Text className='text-white text-xl '>{info.category_description}</Text>
 
             </ScrollView>:<></>
             }
@@ -170,7 +170,7 @@ export default function Anime() {
       </Animated.View>
 
       
-      <View style={{marginBottom:120}}>
+      <View style={{marginBottom:120,marginTop:30}}>
           <FlatList ListEmptyComponent={<></>} onEndReachedThreshold={0.1} ListFooterComponent={renderFooter}
                      refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}  onEndReached={handleLoadMore} 
                         contentContainerStyle={{gap:16,backgroundColor:"black",marginLeft:10,marginRight:10,paddingTop:H_MAX_HEIGHT}} 

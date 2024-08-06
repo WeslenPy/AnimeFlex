@@ -3,6 +3,7 @@ import manager from "@/src/controller/api/animetv/urls";
 import { AnimeProps } from "@/src/interfaces/anime";
 import openScreenAnime, { openScreenPlayer, openScreenPreview } from '@/src/utils/screen';
 import { BottomSheetMethods } from '@gorhom/bottom-sheet/lib/typescript/types';
+import { AnimeQuery } from '@/src/controller/storage/database';
 
 
 
@@ -18,8 +19,8 @@ export function Card({anime,setState,reference}:{anime:AnimeProps,setState:any,r
 
 
     async function addHistory(){
-        // const storage = new AnimeQuery()
-        // await storage.addHistory(anime)
+        const storage = new AnimeQuery()
+        await storage.addHistory(anime)
     }
 
 

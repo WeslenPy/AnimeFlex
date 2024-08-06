@@ -4,11 +4,11 @@ import TopButtons from '@/src/components/player/topButtons';
 import MiddleButtons from '@/src/components/player/middleButtons';
 import Loading from '@/src/components/player/loading';
 import HideButtons from './hideButtons';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import { AVPlaybackStatusSuccess, Video } from 'expo-av';
 import { EpsodiesProps, URLProps } from '@/src/interfaces/anime';
 import GestureTap from './gestureTap';
 import { useState } from 'react';
+import { IndicatorAvanced } from '@/src/components/player/topButtons';
 
 export default function Frame(
     {
@@ -53,9 +53,8 @@ export default function Frame(
 
 
  return (
-    <SafeAreaView style={{flex:1}}>
 
-    <View className='flex h-full w-full relative ' 
+    <View className='flex h-full w-full' 
            style={{backgroundColor:buttons? "rgba(0,0,0,0.7)":"rgba(0,0,0,0)"}}>
 
             {buttons ?
@@ -81,11 +80,12 @@ export default function Frame(
                            progressPlay={progressPlay} setState={setState}></HideButtons>
             }
 
+            <IndicatorAvanced indicator={indicator}></IndicatorAvanced>
+
               
       <GestureTap setState={setState} buttons={buttons}></GestureTap>
     </View>
 
-    </SafeAreaView>
 
   );
 }
