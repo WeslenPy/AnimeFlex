@@ -2,8 +2,10 @@ import { View,Image,Pressable,Text,TouchableOpacity } from 'react-native';
 import { AnimeProps } from "@/src/interfaces/anime";
 import openScreenAnime from '@/src/utils/screen';
 import manager from "@/src/controller/api/animetv/urls";
-import { Feather } from '@expo/vector-icons';
+import { Feather,AntDesign } from '@expo/vector-icons';
 import AnimeStorage from '@/src/controller/storage/manager';
+import { AnimeQuery } from '@/src/controller/storage/database';
+import { useEffect, useState } from 'react';
 
 export default function Box({anime}:{anime:AnimeProps}) {
     let url = new manager.URLManager()
@@ -22,21 +24,70 @@ export default function Box({anime}:{anime:AnimeProps}) {
 
 
 
-export function BoxHistory({anime,state,setState}:{anime:AnimeProps,state:any,setState:any}) {
-    let url = new manager.URLManager()
-    const storage = new AnimeStorage()
+export function BoxHistory({anime,state,setState,remove
+                        }:{anime:AnimeProps,state:any,
+                            setState:any,remove?:boolean}) {
 
+
+    const [favorite,setFavorite] = useState(false)
+    
+    let url = new manager.URLManager()
+    const storage = new AnimeQuery()
+
+
+    function deleteItem(){
+        removeItem()
+        storage.removeHistory(anime)
+
+        if(remove){
+            storage.removeFavorite(anime)
+        }
+
+    }
 
     const removeItem = () => {
         const removedItem = state.filter((item:AnimeProps) => JSON.stringify(item) !== JSON.stringify(anime));
         setState(removedItem);
       };
 
+    function addFavorite(){
+
+
+        if (!favorite){
+            storage.addFavorite(anime)
+            setFavorite(true)
+
+        }else{
+            if(remove){
+                removeItem()
+            }
+
+            storage.removeFavorite(anime)
+            setFavorite(false)
+
+        }
+
+    }
+
+    useEffect(()=>{
+        async function getFav(){
+
+            const result = await storage.getFavorite(anime)
+
+            if (result){
+                setFavorite(true)
+            }else{setFavorite(false)}
+
+        }
+
+        getFav()
+
+    },[])
 
     return (
         <Pressable className='flex-row p-2 m-2 rounded-lg mb-1'
              style={{backgroundColor:"rgba(255,255,255,0.2)"}}  onPress={() => {openScreenAnime(anime.id);}}>
-            <View className='bg-slate-400 rounded-md'>
+            <View className='bg-slate-400 rounded-lg'>
                 <Image  className='w-32 h-40 rounded-lg' 
                         onProgress={(event)=>{}}  
                         source={{uri:url.router_image(anime.category_image)}}   />
@@ -46,12 +97,25 @@ export function BoxHistory({anime,state,setState}:{anime:AnimeProps,state:any,se
                 <View className='mx-2'>
                     <Text className='text-white w-48  mt-2'>{anime.category_name}</Text>
                 </View>
-                <View className='mt-1'>
-                    <TouchableOpacity onPress={()=>{storage.delete(anime);removeItem()}}>
-                        <Feather name="trash" size={24} color="red" />
+               
+            </View>
+            <View className='flex-row justify-end items-end gap-2 mb-3'>
+                <TouchableOpacity onPress={addFavorite}>
+                    {favorite? (
+                        <AntDesign name="heart" size={24} color="white" />
+                        ):(
+                        <AntDesign name="hearto" size={24} color="white" />
+                    )}
 
+                </TouchableOpacity>
+
+                {!remove && (
+
+                    <TouchableOpacity onPress={deleteItem}>
+                        <Feather name="trash" size={24} color="red" />
                     </TouchableOpacity>
-                </View>
+
+                )}
             </View>
        </Pressable>
   );

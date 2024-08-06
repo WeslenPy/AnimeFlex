@@ -1,5 +1,5 @@
 import { AnimeProps } from "@/src/interfaces/anime";
-import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
+import { SQLiteDatabase, openDatabaseSync, useSQLiteContext } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 
 import * as historySchema from "@/src/controller/database/schemas/historySchema";
@@ -7,10 +7,19 @@ import * as animeSchema from "@/src/controller/database/schemas/animeSchema";
 import * as favoritesSchema from "@/src/controller/database/schemas/favoritesSchema";
 import { eq } from "drizzle-orm";
 
+
+
 export class AnimeQuery{
 
+    DATABASE_NAME="anime.db"
+
+    expoDB = openDatabaseSync(this.DATABASE_NAME);
+    db = drizzle(this.expoDB);
+    
+
+
     getContext(){
-        return useSQLiteContext()
+        return this.expoDB
     }
 
 
@@ -18,24 +27,22 @@ export class AnimeQuery{
         try{
             const context = this.getContext()
             const db = drizzle(context,{schema:animeSchema})
-            const response = db.query.animeTable.findFirst({
-                where:eq(animeSchema.animeTable.id,parseInt(anime.id))
+
+            const newRow = await db.insert(animeSchema.animeTable).values({
+                video_id:parseInt(anime.video_id),
+                anime_id:parseInt(anime.id),
+                category_image:anime.category_image,
+                category_name:anime.category_name,
+                title:anime.title,
             })
-    
-            if (!response){
-                const response = await db.insert(animeSchema.animeTable).values({
-                    video_id:parseInt(anime.video_id),
-                    anime_id:parseInt(anime.id),
-                    category_image:anime.category_image,
-                    category_name:anime.category_name,
-                    title:anime.title,
-                })
 
-                return  response
+            return  newRow
     
-            }else{return response}
 
-        }catch{}
+        }catch(error){
+
+            console.log(error)
+        }
 
     }
 
@@ -51,20 +58,71 @@ export class AnimeQuery{
             const context = this.getContext()
             const db = drizzle(context,{schema:favoritesSchema})
     
-            const find = await db.query.favoritesTable.findFirst({
-                where:eq(favoritesSchema.favoritesTable.anime_id,parseInt(anime.id))
-            })
-            if (!find){
-                const response = await db.insert(favoritesSchema.favoritesTable).values({anime_id:parseInt(anime.id)})
-                return response
-            }
+        
+            const response = await db.insert(favoritesSchema.favoritesTable).values({anime_id:parseInt(anime.id)})
+            return response
+            
+        }catch(error){
+
+            console.log(error)
+        }
+    }   
     
-            return find
+    async getFavorite(anime:AnimeProps) {
+        try{
+            const context = this.getContext()
+            const db = drizzle(context,{schema:favoritesSchema})
+        
+            const response = await db.select({id:favoritesSchema.favoritesTable.id}
+                                                ).from(favoritesSchema.favoritesTable
+                                                ).where(eq(favoritesSchema.favoritesTable.anime_id,parseInt(anime.id)))
+            return response
             
-        }catch{
-            
+        }catch(error){
+
+            console.log(error)
+
+            return null
         }
     }
+
+    async removeFavorite(anime:AnimeProps) {
+        try{
+            const context = this.getContext()
+            const db = drizzle(context,{schema:favoritesSchema})
+    
+            
+            const response = await db.delete(favoritesSchema.favoritesTable).where(
+                eq(favoritesSchema.favoritesTable.anime_id,parseInt(anime.id))
+            )
+
+            return response
+    
+            
+        }catch(error){
+
+            console.log(error)
+        }
+    }
+
+    async removeHistory(anime:AnimeProps) {
+            try{
+                const context = this.getContext()
+                const db = drizzle(context,{schema:historySchema})
+        
+                
+                const response = await db.delete(historySchema.historyTable).where(
+                    eq(historySchema.historyTable.anime_id,parseInt(anime.id))
+                )
+
+                return response
+        
+                
+            }catch(error){
+
+                console.log(error)
+            }
+        }
 
 
     async addHistory(anime:AnimeProps) {
@@ -74,15 +132,9 @@ export class AnimeQuery{
 
             const db = drizzle(context,{schema:historySchema})
     
-            const find = await db.query.historyTable.findFirst({
-                where:eq(historySchema.historyTable.anime_id,parseInt(anime.id))
-            })
-            if (!find){
-                const response = await db.insert(historySchema.historyTable).values({anime_id:parseInt(anime.id)})
-                return response
-            }
+            const response = await db.insert(historySchema.historyTable).values({anime_id:parseInt(anime.id)})
+            return response
     
-            return find
             
         }catch(error){
             console.log(error)
@@ -99,26 +151,31 @@ export class AnimeQuery{
             const context = this.getContext()
             const db = drizzle(context,{schema:historySchema})
             const findMany = await db.select().from(historySchema.historyTable
-                                                    ).rightJoin(animeSchema.animeTable, 
+                                                    ).leftJoin(animeSchema.animeTable, 
                                                         eq(historySchema.historyTable.anime_id, 
                                                         animeSchema.animeTable.anime_id)).execute()
             return findMany
 
-        } catch (error) {
-            
-        }
+        }catch(error){
 
+            console.log(error)
+        }
     }   
     
     async getFullFavorites(){
         try {
             const context = this.getContext()
             const db = drizzle(context,{schema:favoritesSchema})
-            const findMany = await db.query.favoritesTable.findMany()
+            const findMany = await db.select().from(favoritesSchema.favoritesTable
+                                                    ).leftJoin(animeSchema.animeTable, 
+                                                        eq(favoritesSchema.favoritesTable.anime_id, 
+                                                        animeSchema.animeTable.anime_id)).execute()
             return findMany
 
-        } catch (error) {
-            
+        }catch(error){
+
+            console.log(error)
+            return null
         }
     }
 

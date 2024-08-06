@@ -9,7 +9,6 @@ import { SQLiteProvider } from "expo-sqlite";
 export default function Index() {
 
   return (
-    <SQLiteProvider databaseName={"anime.db"}>
 
       <PaperProvider>
         <View  className="w-full p-4 bg-black h-full"  >
@@ -18,13 +17,13 @@ export default function Index() {
           <ScrollView style={{flex:1}}
                       showsVerticalScrollIndicator={false} >
 
-              <Slider/>
+                <Slider/>
+
 
             </ScrollView>
 
         </View>
       </PaperProvider>
 
-    </SQLiteProvider>
   );
 };

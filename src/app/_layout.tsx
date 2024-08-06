@@ -1,36 +1,33 @@
-import * as ScreenOrientation from 'expo-screen-orientation';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import { SQLiteProvider } from 'expo-sqlite';
 import migrations from "@/drizzle/migrations";
 import { Stack } from 'expo-router/stack';
-import { useEffect } from 'react';
 import "../styles/global.css";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 import { openDatabaseSync } from "expo-sqlite/next";
-import { View,Text } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 
-
-const DATABASE_NAME="anime.db"
-
-const expoDB = openDatabaseSync(DATABASE_NAME);
-const db = drizzle(expoDB);
-
+import { AnimeQuery } from '../controller/storage/database';
 
 
 export default function Layout() {
 
-  
-  const { success, error } = useMigrations(db, migrations);
+  const context = new AnimeQuery()
+  const { success, error } = useMigrations(context.db, migrations);
+
+  console.log(success)
 
   const config ={
     headerShown: false,
     statusBarTranslucent:true 
   }
 
+  useDrizzleStudio(context.expoDB);
+
   return (
     
-    <SQLiteProvider databaseName={DATABASE_NAME}>
+    <SQLiteProvider databaseName={context.DATABASE_NAME}>
       <GestureHandlerRootView style={{ flex: 1 }}>
           <Stack>
             <Stack.Screen name="(tabs)" options={config} />

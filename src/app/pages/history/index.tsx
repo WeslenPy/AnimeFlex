@@ -14,13 +14,13 @@ export default function History() {
   const storage = new AnimeQuery()
 
   async function getHistory(){
-    // const result = await storage.getFullHistory()
-    // if (result){
+    const result = await storage.getFullHistory()
+    if (result){
 
-    //   const formattedAnime= await storage.formatResult(result)
-    //   setHistory(formattedAnime)
+      const formattedAnime= await storage.formatResult(result)
+      setHistory(formattedAnime)
       
-    // }
+    }
     
     setRefreshing(false);
     setLoading(false)
@@ -50,7 +50,8 @@ export default function History() {
           refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           contentContainerStyle={{gap:16,marginBottom:50}} 
           showsHorizontalScrollIndicator={false} keyExtractor={(item,index)=>{return index.toString()}}  
-        showsVerticalScrollIndicator={true} horizontal={false} data={history} renderItem={({item})=><BoxHistory anime={item} state={history} setState={setHistory}></BoxHistory>}/>
+          showsVerticalScrollIndicator={true} horizontal={false} 
+          data={history} renderItem={({item})=><BoxHistory anime={item} state={history} setState={setHistory} remove={false}></BoxHistory>}/>
 
        
       </>}

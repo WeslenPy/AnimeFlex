@@ -6,12 +6,16 @@ import { useRef, useState } from 'react';
 import BottomSheet from '@gorhom/bottom-sheet';
 import { AnimeProps} from '@/src/interfaces/anime';
 import Preview from '../preview';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Flat({config}:{config:FlatProps}) {
   const bottomSheetRef = useRef<BottomSheet>(null);
   const [sheet,setSheet]  = useState<AnimeProps>()
 
   return (
+    <GestureHandlerRootView>
+
+
     <View className='flex-1'>
 
         <View className='text-xl mb-5 mt-5'><Text className='text-slate-100'>{config.title}</Text></View>
@@ -25,6 +29,7 @@ export default function Flat({config}:{config:FlatProps}) {
 
 
     </View>
+    </GestureHandlerRootView>
 
   );
 }

@@ -1,5 +1,9 @@
 
 
+export function currentTime(){
+  return Date.now()
+}
+
 export function formatTime(milliseconds:number){
     const totalSeconds = Math.floor(milliseconds / 1000);
     const hours = Math.floor(totalSeconds / 3600);
