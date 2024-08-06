@@ -47,6 +47,7 @@ export default function History() {
       :<>
       
       <FlatList  
+          ListFooterComponent={<View className='mb-10'></View>}
           refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           contentContainerStyle={{gap:16,marginBottom:50}} 
           showsHorizontalScrollIndicator={false} keyExtractor={(item,index)=>{return index.toString()}}  
