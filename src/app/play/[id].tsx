@@ -18,6 +18,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import Frame from '@/src/components/player/frame';
 import Info from '@/src/components/player/info';
 import { PaperProvider } from 'react-native-paper';
+import { AnimeQuery } from '@/src/controller/storage/database';
 
 
 export default function Player() {
@@ -25,6 +26,7 @@ export default function Player() {
 
 
     const storage = new AnimeStorage()
+    const storageDatabase = new AnimeQuery()
     const {id,current, back_id}= useLocalSearchParams<{ id: string,current: string,back_id:string}>();
 
 
@@ -34,6 +36,9 @@ export default function Player() {
 
     const [loading, setLoading] = useState(true);
     const [buttons, setButtons] = useState(true);
+    const [source, setSource] = useState("");
+    const [lastPosition, setLastPosition] = useState(0);
+
     const [isFullScreen, setFullScreen] = useState(false);
 
 
@@ -117,6 +122,23 @@ export default function Player() {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
       setFullScreen(true)
 
+
+      async function getLastPosition(){
+        const progress = await storage.getProgress(id)
+        if (progress){
+          setLastPosition(progress.positionActual)
+
+        }
+
+      }
+
+      async function getThumb(video_id:number){
+        let find  = await storageDatabase.getThumb(video_id)
+        if (find && find.length>0){
+          setSource(find[0].uri)
+        }
+      }
+
       async function getURL(id:any){
         let session = new SessionManager()
 
@@ -148,11 +170,16 @@ export default function Player() {
           }
         }
 
+
         setVideoUrl(data);
         setLoading(false)
       }
-  
+      
+      getLastPosition()
+      getThumb(parseInt(id))
       getURL(id);
+
+      
     },[]);
 
 
@@ -198,6 +225,11 @@ export default function Player() {
               onFullscreenUpdate={onFullscreenChange}
               onPlaybackStatusUpdate={setPausedCallback}
               volume={1.0}
+              shouldCorrectPitch={true}
+              posterSource={{uri:source}}
+              usePoster={true}
+              positionMillis={lastPosition? lastPosition:0}
+
               >
               </Video>
 

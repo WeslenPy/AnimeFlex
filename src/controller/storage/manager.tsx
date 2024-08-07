@@ -98,7 +98,7 @@ class AnimeStorage extends Keys{
 
 
 
-    async getProgress(videoId:string):Promise<{progress:Float}>{
+    async getProgress(videoId:string):Promise<{progress:Float,positionActual:Float}>{
        return await this.get(videoId); 
     }
 
