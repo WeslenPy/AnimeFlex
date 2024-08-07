@@ -47,7 +47,7 @@ export default function Profile() {
               <Switch />
             </View>
             <View className='flex-row justify-between items-center'>
-              <Text className='text-white text-lg'>Iniciar video sempre expandido</Text>
+              <Text className='text-white text-lg'>Continuar de onde parou</Text>
               <Switch  />
             </View>
 
