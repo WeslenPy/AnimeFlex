@@ -8,7 +8,8 @@ import { SessionManager } from '@/src/controller/api/animetv/session';
 import response from "@/src/controller/api/animetv/response";
 import AnimeStorage from '@/src/controller/storage/manager';
 import { AnimeQuery } from '@/src/controller/storage/database';
-
+import { DownloadFile } from '@/src/interfaces/download';
+import { URLProps } from '../../interfaces/anime';
 
 export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
@@ -16,7 +17,10 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
     const storageDatabase = new AnimeQuery()
 
     const [image, setImage] = useState("");
+    const [file, setFile] = useState<DownloadFile>();
+    const [downloading, setDownloading] = useState(false);
     const [progress, setProgress] = useState(0);
+
     const manager = new response.ResponseManager();
     
     function getRandomInt(min:number, max:number) {
@@ -24,6 +28,18 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
         max = Math.floor(max);
         return Math.floor(Math.random() * (max - min) + min);
       }
+
+
+    function startDownload(){
+        console.log(file)
+        console.log("start download")
+        if(file){
+            storageDatabase.addDownload(file)
+            setDownloading(true)
+        
+        }
+
+    }
       
     useEffect(() => {
 
@@ -40,10 +56,20 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
             let session = new SessionManager()
             let url = session.router_ep(id)
-            let data = await session.get(url)
+            let data:URLProps = await session.get(url)
             data = manager.parse(data);
 
 
+            let file:DownloadFile = {
+                url:data.urls[data.urls.length-1],
+                video_id:parseInt(data.video_id),
+                anime_id:parseInt(data.category_id),
+                title:data.title
+            }
+
+            setFile(file)
+
+            console.log(file)
 
             let find = await storageDatabase.getThumb(parseInt(ep.video_id))
 
@@ -86,8 +112,8 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                     <View className='flex-row items-center justify-between flex-1 mr-4'>
                         <Text className='text-white  w-44 mr-10 '>{ep.title}</Text>
                         <View className='flex-row h-full items-end mb-4'>
-                            <TouchableOpacity>
-                                <Octicons name="download" size={26} color="white" />
+                            <TouchableOpacity onPress={startDownload}>
+                                <Octicons name={!downloading ?"download":"beaker"} size={26} color="white" />
                             </TouchableOpacity>
 
                         </View>

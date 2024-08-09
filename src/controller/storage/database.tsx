@@ -1,13 +1,14 @@
 import { AnimeProps } from "@/src/interfaces/anime";
-import { SQLiteDatabase, openDatabaseSync, useSQLiteContext } from "expo-sqlite";
+import { openDatabaseSync } from "expo-sqlite";
 import { drizzle } from "drizzle-orm/expo-sqlite";
 
 import * as historySchema from "@/src/controller/database/schemas/historySchema";
 import * as animeSchema from "@/src/controller/database/schemas/animeSchema";
 import * as favoritesSchema from "@/src/controller/database/schemas/favoritesSchema";
 import * as thumbnailSchema from "@/src/controller/database/schemas/thumbnailSchema";
-import { eq } from "drizzle-orm";
-
+import * as downloadFileSchema from "@/src/controller/database/schemas/downloadFileSchema";
+import { eq,and } from "drizzle-orm";
+import { DownloadFile } from "@/src/interfaces/download";
 
 
 export class AnimeQuery{
@@ -224,6 +225,88 @@ export class AnimeQuery{
           }));
 
         return formattedAnime;
+    }
+
+
+    async addDownload(file:DownloadFile){
+        try{
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+            
+            const response = await db.insert(downloadFileSchema.downloadTable).values(file)
+            return response
+
+        }catch(error){
+            console.log(error)
+        }
+
+    }
+    
+    async getDownload(video_id:number){
+        const context = this.getContext()
+        const db = drizzle(context,{schema:downloadFileSchema})
+        
+        const findFirst = await db.query.downloadTable.findFirst({where:eq(downloadFileSchema.downloadTable.video_id,video_id)})
+        return findFirst
+
+    }
+
+    async getFullDownload(complete:boolean,pause:boolean){
+        try {
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+            const findMany = await db.select().from(downloadFileSchema.downloadTable
+                                            ).where(and(eq(downloadFileSchema.downloadTable.complete,complete),
+                                                        eq(downloadFileSchema.downloadTable.pause,pause))).execute()
+            return findMany
+
+        }catch(error){
+
+            console.log(error)
+            return []
+        }
+    }   
+
+    async updateDownload(data:any,video_id:number){
+        try {
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+
+            const result = await db.update(downloadFileSchema.downloadTable)
+            .set(data)
+            .where(eq(downloadFileSchema.downloadTable.video_id, video_id))
+            .returning({ updatedId: downloadFileSchema.downloadTable.id });
+
+
+            return true
+
+        }catch(error){
+            return false
+        }
+    }
+
+    async updateStartedDownload(started:boolean,video_id:number){
+
+        return await this.updateDownload({started:started},video_id)
+    }  
+    async updateStatusDownload(pause:boolean,video_id:number){
+
+        return await this.updateDownload({pause:pause},video_id)
+    }
+
+    async updateProgressDownload(progress:number,video_id:number){
+        return await this.updateDownload({progress:progress},video_id)
+
+    }
+
+    async updateCompleteDownload(complete:boolean,video_id:number){
+        return await this.updateDownload({complete:complete},video_id)
+
+    }
+
+    async updateURIDownload(uri:string,video_id:number){
+        return await this.updateDownload({uri:uri},video_id)
+
     }
 
 }

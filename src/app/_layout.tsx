@@ -1,19 +1,18 @@
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
-import { SQLiteProvider } from 'expo-sqlite';
 import migrations from "@/drizzle/migrations";
 import { Stack } from 'expo-router/stack';
 import "../styles/global.css";
-import { drizzle } from "drizzle-orm/expo-sqlite";
-import { openDatabaseSync } from "expo-sqlite/next";
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
-
 import { AnimeQuery } from '../controller/storage/database';
-
+import DownloadManager from '../controller/storage/download';
+import {useEffect} from "react";
 
 export default function Layout() {
 
   const context = new AnimeQuery()
+  const download = new DownloadManager()
+
   const { success, error } = useMigrations(context.db, migrations);
 
   const config ={
@@ -22,6 +21,17 @@ export default function Layout() {
   }
 
   useDrizzleStudio(context.expoDB);
+
+  
+  useEffect(()=>{
+    async function start(){
+      download.createTask()
+      await download.registerTask()
+
+    }
+    start()
+    
+  },[])
 
   return (
     
