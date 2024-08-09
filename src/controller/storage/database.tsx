@@ -242,12 +242,35 @@ export class AnimeQuery{
 
     }
     
-    async getDownload(video_id:number){
-        const context = this.getContext()
-        const db = drizzle(context,{schema:downloadFileSchema})
-        
-        const findFirst = await db.query.downloadTable.findFirst({where:eq(downloadFileSchema.downloadTable.video_id,video_id)})
-        return findFirst
+    async getDownload(video_id:number,complete:boolean=false){
+        try{
+
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+            
+            const response = await db.select().from(downloadFileSchema.downloadTable
+                ).where(and(eq(downloadFileSchema.downloadTable.video_id,video_id),
+                            eq(downloadFileSchema.downloadTable.complete,complete))).execute()
+    
+            return response
+        }catch(error){
+            return []
+        }
+
+    }   
+    async getDownloadAny(video_id:number){
+        try{
+
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+            
+            const response = await db.select().from(downloadFileSchema.downloadTable
+                ).where(eq(downloadFileSchema.downloadTable.video_id,video_id)).execute()
+    
+            return response
+        }catch(error){
+            return []
+        }
 
     }
 
@@ -306,6 +329,11 @@ export class AnimeQuery{
 
     async updateURIDownload(uri:string,video_id:number){
         return await this.updateDownload({uri:uri},video_id)
+
+    }  
+    
+    async updateDataDownload(data:any,video_id:number){
+        return await this.updateDownload({data:data},video_id)
 
     }
 

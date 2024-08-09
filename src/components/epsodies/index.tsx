@@ -1,25 +1,34 @@
 import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet, TouchableOpacity } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
 import {openScreenPlayer} from '@/src/utils/screen';
-import { Feather, Octicons } from '@expo/vector-icons';
+import { AntDesign, Feather, FontAwesome, MaterialIcons, Octicons } from '@expo/vector-icons';
 import * as VideoThumbnails from 'expo-video-thumbnails';
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useRef } from 'react';
 import { SessionManager } from '@/src/controller/api/animetv/session';
 import response from "@/src/controller/api/animetv/response";
 import AnimeStorage from '@/src/controller/storage/manager';
 import { AnimeQuery } from '@/src/controller/storage/database';
 import { DownloadFile } from '@/src/interfaces/download';
 import { URLProps } from '../../interfaces/anime';
+import DownloadManager from '@/src/controller/storage/download';
+import { DownloadResumable } from 'expo-file-system';
 
 export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
     const storage = new AnimeStorage()
     const storageDatabase = new AnimeQuery()
+    const storageDownload = new DownloadManager()
 
     const [image, setImage] = useState("");
     const [file, setFile] = useState<DownloadFile>();
+
     const [downloading, setDownloading] = useState(false);
+    const downloadRef = useRef<DownloadResumable>();
+
     const [progress, setProgress] = useState(0);
+    const [progressDownload, setProgressDownload] = useState(0);
+
+    const [pause, setPause] = useState(false);
 
     const manager = new response.ResponseManager();
     
@@ -30,15 +39,39 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
       }
 
 
-    function startDownload(){
-        console.log(file)
-        console.log("start download")
+    async function startDownload(){
         if(file){
-            storageDatabase.addDownload(file)
             setDownloading(true)
+            setPause(false)
+
+            await storageDatabase.addDownload(file)
+            await storageDownload.createDownload(file,downloadRef,setProgressDownload)
         
         }
 
+    }
+
+    async function pauseDownload(){
+        if (downloadRef.current){
+            console.log(downloadRef.current)
+            if (!pause){
+                setPause(true)
+                await storageDatabase.updateStatusDownload(true,parseInt(ep.video_id))
+                await downloadRef.current.pauseAsync()
+            }
+        }
+    }
+         
+    async function resumeDownload(){
+
+        if (downloadRef.current){
+
+            if (pause){
+                await storageDatabase.updateStatusDownload(false,parseInt(ep.video_id))
+                await downloadRef.current.resumeAsync()
+                setPause(false)
+            }
+        }
     }
       
     useEffect(() => {
@@ -69,8 +102,6 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
             setFile(file)
 
-            console.log(file)
-
             let find = await storageDatabase.getThumb(parseInt(ep.video_id))
 
             if(find && find.length>0){
@@ -91,6 +122,21 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
         getURL(ep.video_id);
 
       },[]);
+
+      useEffect(()=>{
+
+        async function getDownload(){
+            const response = await  storageDownload.resumeFromDatabase(parseInt(ep.video_id),downloadRef,setProgressDownload)
+            if (response){
+                setProgressDownload(parseInt(response.progress))
+                setDownloading(true)
+                setPause(response.pause)
+            }
+        }
+        getDownload()
+
+
+      },[])
   
     return (
             <Pressable className=' flex rounded-md justify-start mx-1' style={styles.color} onPress={() => {openScreenPlayer(ep.video_id,ep.index_id.toString(),page,true);}}>
@@ -112,15 +158,63 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                     <View className='flex-row items-center justify-between flex-1 mr-4'>
                         <Text className='text-white  w-44 mr-10 '>{ep.title}</Text>
                         <View className='flex-row h-full items-end mb-4'>
-                            <TouchableOpacity onPress={startDownload}>
-                                <Octicons name={!downloading ?"download":"beaker"} size={26} color="white" />
-                            </TouchableOpacity>
+                        {progress <100 ?
+                            !downloading ? (
+                                <TouchableOpacity onPress={startDownload}>
+                                    <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
+                                           {progress>=100?(
+                                               <MaterialIcons name="file-download-done" size={26} color="white" />
+
+                                           ):(
+                                               <Octicons name={"download"} size={26} color="white" />
+
+                                           )}
+                                           
+                                    </View>
+
+                                </TouchableOpacity>
+                                ):(
+                                <TouchableOpacity onPress={()=>{if(!pause){pauseDownload()}else{resumeDownload()}}}>
+                                    <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
+                                        {pause?(
+                                            <MaterialIcons name="downloading" size={26} color="white" />
+                                            ):
+                                            (
+                                            <FontAwesome name="close" size={26} color="red" />
+                                        )}
+                                    </View>
+                                </TouchableOpacity>
+                                  
+                                
+                                )
+                            :(
+                                <TouchableOpacity >
+                                <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
+                                    <MaterialIcons name="file-download-done" size={26} color="white" />
+                                        
+                                </View>
+
+                                </TouchableOpacity>
+                            )}
+
+                          
+                           
 
                         </View>
                     </View>
 
                 </View>
-                <View className=' bg-red-500 rounded-md mt-1' style={{width:`${progress}%`,padding:progress>0?3:0,borderTopLeftRadius:0,borderBottomLeftRadius:0}}></View>
+                {progressDownload && progressDownload<100? (
+                    <View className=' bg-green-500 rounded-xl mt-3 justify-center items-center' style={{width:`${progressDownload}%`,padding:progressDownload<6?6:0,borderTopLeftRadius:0,borderBottomLeftRadius:0}}>
+                        {progressDownload>6 && (
+                            <Text className='text-amber-300 text-sm'>{progressDownload}%</Text>
+                        )}
+                    </View>
+
+                ):(
+                    <View className=' bg-red-500 rounded-md mt-1' style={{width:`${progress}%`,padding:progress>0?3:0,borderTopLeftRadius:0,borderBottomLeftRadius:0}}></View>
+
+                )}
 
         </Pressable>
 

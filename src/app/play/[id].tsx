@@ -20,7 +20,6 @@ import Info from '@/src/components/player/info';
 import { PaperProvider } from 'react-native-paper';
 import { AnimeQuery } from '@/src/controller/storage/database';
 
-
 export default function Player() {
     useKeepAwake();
 
@@ -122,7 +121,6 @@ export default function Player() {
       ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE)
       setFullScreen(true)
 
-
       async function getLastPosition(){
         const progress = await storage.getProgress(id)
         if (progress){
@@ -139,40 +137,77 @@ export default function Player() {
         }
       }
 
-      async function getURL(id:any){
-        let session = new SessionManager()
+      async function getFile(){
 
-        let url = session.router_ep(id)
-        let data = await session.get(url)
-        
-        
-        let url_cat_id = session.router_cat_id(data[0].category_id)
+        const result = await storageDatabase.getDownload(parseInt(id),true)
 
-        let data_cat:EpsodiesProps[] = await session.get(url_cat_id)
-        
-        data = manager.parse(data);
-
-        data_cat  =data_cat.reverse()
-
-        if(current){
-          let currentIndex = parseInt(current)
-          if (currentIndex <data_cat.length-1 ){
-
-            let newIndex = currentIndex+1
-  
-            data_cat[newIndex].index_id=newIndex
-
-            if (currentIndex>0 && currentIndex <=data_cat.length){
-              data_cat[newIndex].back_ep=data_cat[currentIndex-1].video_id
-              data_cat[newIndex].back_id=currentIndex-1
+        if(result && result.length>0){
+          const row = result[0]
+          if (row.uri){
+            const data:URLProps= {
+              urls:[row.uri],
+              sinop:"",
+              video_id:row.video_id.toString(),
+              category_id:row.anime_id.toString(),
+              title:row.title,
             }
-            nextEp.current= data_cat[newIndex]
+
+            console.log(row)
+            return data
+
           }
         }
+        return false
+
+      }
+
+      async function getURL(id:any){
+  
+        let session = new SessionManager()
+
+        let data:URLProps|boolean = await getFile()
+        if (!data){
+          let url = session.router_ep(id)
+          let result = await session.get(url)
+          data = result[0]
+          data = manager.parse(data);
 
 
-        setVideoUrl(data);
-        setLoading(false)
+        }
+
+        if (data){
+
+          let url_cat_id = session.router_cat_id(data.category_id)
+  
+          let data_cat:EpsodiesProps[] = await session.get(url_cat_id)
+          
+  
+          data_cat  =data_cat.reverse()
+  
+          if(current){
+            let currentIndex = parseInt(current)
+            if (currentIndex <data_cat.length-1 ){
+  
+              let newIndex = currentIndex+1
+    
+              data_cat[newIndex].index_id=newIndex
+  
+              if (currentIndex>0 && currentIndex <=data_cat.length){
+                data_cat[newIndex].back_ep=data_cat[currentIndex-1].video_id
+                data_cat[newIndex].back_id=currentIndex-1
+              }
+              nextEp.current= data_cat[newIndex]
+            }
+
+          }
+
+          setVideoUrl(data);
+          setLoading(false)
+
+
+        }
+        
+     
       }
       
       getLastPosition()

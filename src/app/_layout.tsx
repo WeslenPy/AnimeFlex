@@ -23,15 +23,7 @@ export default function Layout() {
   useDrizzleStudio(context.expoDB);
 
   
-  useEffect(()=>{
-    async function start(){
-      download.createTask()
-      await download.registerTask()
-
-    }
-    start()
-    
-  },[])
+ 
 
   return (
     

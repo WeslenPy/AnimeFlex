@@ -3,6 +3,7 @@ import * as BackgroundFetch from 'expo-background-fetch';
 import * as FileSystem from 'expo-file-system';
 import { AnimeQuery } from './database';
 import {DownloadProgressData} from "expo-file-system"
+import { DownloadFile } from '@/src/interfaces/download';
 
 export default class DownloadManager{
 
@@ -13,6 +14,8 @@ export default class DownloadManager{
   
     constructor(){
         this.storage = new AnimeQuery()
+
+        this.ensureDirExists(this.FOLDERURI)
     }
 
 
@@ -36,13 +39,91 @@ export default class DownloadManager{
 
     }
 
+    async ensureDirExists(folder:string) {
+        const dirInfo = await FileSystem.getInfoAsync(folder);
+        if (!dirInfo.exists) {
+          await FileSystem.makeDirectoryAsync(folder, { intermediates: true });
+        }
+    }
 
-    getProgress(downloadProgress:DownloadProgressData,video_id:number){
-        const progress = downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite;
+    getProgress(downloadProgress:DownloadProgressData,video_id:number,setState?:any){
+        const progress = Math.round(( downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite) * 100)
         this.storage.updateProgressDownload(progress,video_id)
 
         console.log(progress)
+        if (setState){
+            setState(progress)
+        }
 
+        return 
+
+    }
+
+    async resumeFromDatabase(video_id:number,reference:any,setState?:any){
+
+        const data = await this.storage.getDownloadAny(video_id)
+
+        if(data && data.length>0){
+            const row = data[0]
+            if (row.uri){
+                const downloadResumable = this.createResumable(row.url,row.uri,row.video_id,setState)
+                reference.current=downloadResumable;
+                return row
+            }
+        }
+        return false
+    }
+
+    async createResumable(url:string,uri:string,video_id:number,setState:any){
+
+        const downloadResumable = FileSystem.createDownloadResumable(
+            url,
+            uri,
+            {
+                headers:{
+                    "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
+                },
+                cache:false,
+            },
+            (downloadProgress)=>{this.getProgress(downloadProgress,video_id,setState)},
+        );
+
+        return downloadResumable
+
+    }
+
+    async checkDownload(downloadResumable:FileSystem.DownloadResumable,video_id:number){        
+        const downloaded = await downloadResumable.downloadAsync();
+
+        if (downloaded){
+            console.log(downloaded)
+            if(downloaded.status==200){
+                await this.storage.updateCompleteDownload(true,video_id)
+                await this.storage.updateProgressDownload(100,video_id)
+
+                return true
+            }
+
+        }
+        return false
+
+    }
+
+    async createDownload(file:DownloadFile,reference?:any,setState?:any){
+        const dirFileURI = `${this.FOLDERURI}${file.anime_id}`;
+        const fileURI = `${dirFileURI}/${file.video_id}_${this.getURIByName(file.title)}`;
+
+        await this.ensureDirExists(dirFileURI)
+        await this.storage.updateURIDownload(fileURI,file.video_id)
+
+        const downloadResumable = await this.createResumable(file.url,fileURI,file.video_id,setState)
+
+        await this.storage.updateDataDownload(downloadResumable.savable(),file.video_id)
+
+        reference.current = downloadResumable
+
+        return  await this.checkDownload(downloadResumable,file.video_id);
+       
     }
 
 
@@ -61,24 +142,8 @@ export default class DownloadManager{
             
                 for (let i = 0; i < filesToDownload.length; i++) {
                     const downloadRow = filesToDownload[i];
-                    const fileUri = `${this.FOLDERURI}${this.getURIByName(downloadRow.title)}`;
-
-                    await this.storage.updateURIDownload(fileUri,downloadRow.video_id)
-
-            
-                    const downloadResumable = FileSystem.createDownloadResumable(
-                        downloadRow.url,
-                        fileUri,
-                        {},
-                        (downloadProgress)=>{this.getProgress(downloadProgress,downloadRow.video_id)},
-                    );
-
-                    const downloaded = await downloadResumable.downloadAsync();
-                    if (downloaded){
-                        await this.storage.updateCompleteDownload(true,downloadRow.video_id)
-                        await this.storage.updateProgressDownload(100,downloadRow.video_id)
-                        console.log(`Arquivo baixado: ${downloaded.uri}`);
-                    }
+                    await this.createDownload(downloadRow)
+                   
                 }
             
                 console.log('Todos os arquivos foram baixados.');

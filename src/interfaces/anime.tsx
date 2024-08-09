@@ -42,8 +42,8 @@ export interface InfoProps{
   }
    
 export interface URLProps {
-    urls:[]
-    sinop:string
+    urls:string[];
+    sinop:string;
     video_id:string;
     category_id:string;
     title:string;
