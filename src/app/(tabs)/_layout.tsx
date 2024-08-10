@@ -49,7 +49,7 @@ export default function RootLayout() {
             options={{
               ...options,
               headerTransparent:true,
-              title:"Favoritos",
+              title:"Listas",
               tabBarIcon:({focused,color,size})=>{
                 return  <Ionicons name="bookmark-outline" size={size} color={color}/>
               }
