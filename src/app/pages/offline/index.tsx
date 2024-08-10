@@ -53,7 +53,7 @@ export default function Offline() {
           contentContainerStyle={{gap:16,marginBottom:50}} 
           showsHorizontalScrollIndicator={false} keyExtractor={(item,index)=>{return index.toString()}}  
           showsVerticalScrollIndicator={true} horizontal={false} 
-          data={offline} renderItem={({item})=><BoxHistory anime={item} state={offline} setState={setOffline} remove={false}></BoxHistory>}/>
+          data={offline} renderItem={({item})=><BoxHistory anime={item} state={offline} setState={setOffline} remove={true}></BoxHistory>}/>
 
        
       </>}
