@@ -288,6 +288,24 @@ export class AnimeQuery{
             console.log(error)
             return []
         }
+    }    
+
+    async getFullDownloadByAnime(){
+        try {
+            const context = this.getContext()
+            const db = drizzle(context,{schema:downloadFileSchema})
+            const findMany = await db.select().from(downloadFileSchema.downloadTable
+                                            ).where(eq(downloadFileSchema.downloadTable.complete,true)
+                                            ).leftJoin(animeSchema.animeTable, 
+                                                eq(downloadFileSchema.downloadTable.anime_id, 
+                                                animeSchema.animeTable.anime_id)).execute()
+            return findMany
+
+        }catch(error){
+
+            console.log(error)
+            return []
+        }
     }   
 
     async updateDownload(data:any,video_id:number){

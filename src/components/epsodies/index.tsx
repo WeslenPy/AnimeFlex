@@ -1,7 +1,7 @@
-import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet, TouchableOpacity } from 'react-native';
+import { View,Pressable,Text,ImageBackground,ActivityIndicator,StyleSheet } from 'react-native';
 import { EpsodiesProps } from "../../interfaces/anime";
 import {openScreenPlayer} from '@/src/utils/screen';
-import { AntDesign, Feather, FontAwesome, MaterialIcons, Octicons } from '@expo/vector-icons';
+import { Feather,} from '@expo/vector-icons';
 import * as VideoThumbnails from 'expo-video-thumbnails';
 import { useState,useEffect, useRef } from 'react';
 import { SessionManager } from '@/src/controller/api/animetv/session';
@@ -12,6 +12,8 @@ import { DownloadFile } from '@/src/interfaces/download';
 import { URLProps } from '../../interfaces/anime';
 import DownloadManager from '@/src/controller/storage/download';
 import { DownloadResumable } from 'expo-file-system';
+
+import DownloadOptions from '../download';
 
 export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
@@ -27,6 +29,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
     const [progress, setProgress] = useState(0);
     const [progressDownload, setProgressDownload] = useState(0);
+    const [resumed, setResumed] = useState(false);
 
     const [pause, setPause] = useState(false);
 
@@ -64,16 +67,35 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
          
     async function resumeDownload(){
 
+        if(resumed){
+            setResumed(false)
+            setPause(false)
+            setDownloading(true)
+            return await getDownloadResumed()
+            
+        }
+
         if (downloadRef.current){
+            console.log(downloadRef.current)
 
             if (pause){
+                setPause(false)
+                setDownloading(true)
                 await storageDatabase.updateStatusDownload(false,parseInt(ep.video_id))
                 await downloadRef.current.resumeAsync()
-                setPause(false)
             }
         }
     }
-      
+
+    async function getDownloadResumed(){
+        const response = await  storageDownload.resumeFromDatabase(parseInt(ep.video_id),downloadRef,setProgressDownload)
+        if (response){
+            if (pause && downloadRef.current){
+                await downloadRef.current.pauseAsync()
+            }
+        }
+    }
+
     useEffect(() => {
 
         async function getProgress(){
@@ -123,16 +145,25 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
 
       },[]);
 
+      
       useEffect(()=>{
 
-        async function getDownload(){
-            const response = await  storageDownload.resumeFromDatabase(parseInt(ep.video_id),downloadRef,setProgressDownload)
-            if (response){
-                setProgressDownload(parseInt(response.progress))
+        async function getDownload() {
+
+            const data = await storageDatabase.getDownloadAny(parseInt(ep.video_id))
+            if (data && data.length>0){
+                const row = data[0]
+
+                
+                setPause(row.pause)
+                setProgressDownload(parseInt(row.progress))
                 setDownloading(true)
-                setPause(response.pause)
+                setResumed(true)
+
             }
+            
         }
+
         getDownload()
 
 
@@ -156,59 +187,20 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                         </View>
                     </View>
                     <View className='flex-row items-center justify-between flex-1 mr-4'>
-                        <Text className='text-white  w-44 mr-10 '>{ep.title}</Text>
-                        <View className='flex-row h-full items-end mb-4'>
-                        {progress <100 ?
-                            !downloading ? (
-                                <TouchableOpacity onPress={startDownload}>
-                                    <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
-                                           {progress>=100?(
-                                               <MaterialIcons name="file-download-done" size={26} color="white" />
+                        <Text className='text-white  w-44 ' numberOfLines={3} lineBreakMode='clip'>{ep.title}</Text>
+                        <View className='flex-row h-full items-center p-2'>
 
-                                           ):(
-                                               <Octicons name={"download"} size={26} color="white" />
-
-                                           )}
-                                           
-                                    </View>
-
-                                </TouchableOpacity>
-                                ):(
-                                <TouchableOpacity onPress={()=>{if(!pause){pauseDownload()}else{resumeDownload()}}}>
-                                    <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
-                                        {pause?(
-                                            <MaterialIcons name="downloading" size={26} color="white" />
-                                            ):
-                                            (
-                                            <FontAwesome name="close" size={26} color="red" />
-                                        )}
-                                    </View>
-                                </TouchableOpacity>
-                                  
-                                
-                                )
-                            :(
-                                <TouchableOpacity >
-                                <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
-                                    <MaterialIcons name="file-download-done" size={26} color="white" />
-                                        
-                                </View>
-
-                                </TouchableOpacity>
-                            )}
-
-                          
-                           
+                           <DownloadOptions startDownload={startDownload} pause={pause} progress={progress}
+                                            resumeDownload={resumeDownload} pauseDownload={pauseDownload} downloading={downloading} ></DownloadOptions>
 
                         </View>
                     </View>
 
                 </View>
                 {progressDownload && progressDownload<100? (
-                    <View className=' bg-green-500 rounded-xl mt-3 justify-center items-center' style={{width:`${progressDownload}%`,padding:progressDownload<6?6:0,borderTopLeftRadius:0,borderBottomLeftRadius:0}}>
-                        {progressDownload>6 && (
-                            <Text className='text-amber-300 text-sm'>{progressDownload}%</Text>
-                        )}
+                    <View className=' bg-orange-500 rounded-xl mt-3 justify-center items-center' 
+                                style={{width:`${progressDownload}%`,padding:progressDownload>0?3:0,borderTopLeftRadius:0,borderBottomLeftRadius:0}}>
+                    
                     </View>
 
                 ):(

@@ -61,20 +61,34 @@ export default class DownloadManager{
 
     async resumeFromDatabase(video_id:number,reference:any,setState?:any){
 
-        const data = await this.storage.getDownloadAny(video_id)
+        try {
+            
+            const data = await this.storage.getDownloadAny(video_id)
 
-        if(data && data.length>0){
-            const row = data[0]
-            if (row.uri){
-                const downloadResumable = this.createResumable(row.url,row.uri,row.video_id,setState)
-                reference.current=downloadResumable;
-                return row
+            if(data && data.length>0){
+                const row = data[0]
+                if (row.uri){
+    
+                    const downloadResumable = await this.createResumable(row.url,row.uri,row.video_id,setState)
+                    reference.current=downloadResumable;
+    
+                    return row
+                }
             }
-        }
         return false
+
+        } catch ( error) {
+            console.log(error)
+            return false
+
+            
+        }
+
+      
     }
 
     async createResumable(url:string,uri:string,video_id:number,setState:any){
+
 
         const downloadResumable = FileSystem.createDownloadResumable(
             url,
@@ -93,37 +107,51 @@ export default class DownloadManager{
     }
 
     async checkDownload(downloadResumable:FileSystem.DownloadResumable,video_id:number){        
-        const downloaded = await downloadResumable.downloadAsync();
+        try {
+            const downloaded = await downloadResumable.downloadAsync();
 
-        if (downloaded){
-            console.log(downloaded)
-            if(downloaded.status==200){
-                await this.storage.updateCompleteDownload(true,video_id)
-                await this.storage.updateProgressDownload(100,video_id)
+            if (downloaded){
+                console.log(downloaded)
+                if(downloaded.status==200){
+                    await this.storage.updateCompleteDownload(true,video_id)
+                    await this.storage.updateProgressDownload(100,video_id)
 
-                return true
+                    return true
+                }
+
             }
 
+            return false
+
+        } catch ( error) {
+            console.log(error)
+            return false
         }
-        return false
 
     }
 
     async createDownload(file:DownloadFile,reference?:any,setState?:any){
-        const dirFileURI = `${this.FOLDERURI}${file.anime_id}`;
-        const fileURI = `${dirFileURI}/${file.video_id}_${this.getURIByName(file.title)}`;
+        try {
 
-        await this.ensureDirExists(dirFileURI)
-        await this.storage.updateURIDownload(fileURI,file.video_id)
+            const dirFileURI = `${this.FOLDERURI}${file.anime_id}`;
+            const fileURI = `${dirFileURI}/${file.video_id}_${this.getURIByName(file.title)}`;
 
-        const downloadResumable = await this.createResumable(file.url,fileURI,file.video_id,setState)
+            await this.ensureDirExists(dirFileURI)
+            await this.storage.updateURIDownload(fileURI,file.video_id)
 
-        await this.storage.updateDataDownload(downloadResumable.savable(),file.video_id)
+            const downloadResumable = await this.createResumable(file.url,fileURI,file.video_id,setState)
 
-        reference.current = downloadResumable
+            await this.storage.updateDataDownload(downloadResumable.savable(),file.video_id)
 
-        return  await this.checkDownload(downloadResumable,file.video_id);
-       
+            reference.current = downloadResumable
+
+            return  await this.checkDownload(downloadResumable,file.video_id);
+            
+        } catch ( error) {
+            console.log(error)
+            return false
+        }
+
     }
 
 
