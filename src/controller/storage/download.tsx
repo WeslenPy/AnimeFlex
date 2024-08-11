@@ -14,11 +14,8 @@ export default class DownloadManager{
   
     constructor(){
         this.storage = new AnimeQuery()
-
         this.ensureDirExists(this.FOLDERURI)
     }
-
-
 
     async startDownload(){
 
@@ -35,9 +32,14 @@ export default class DownloadManager{
 
     }
 
-    stopDownload(video_id:number){
+
+    async requiredPermission(){
+        const {granted} = await FileSystem.StorageAccessFramework.requestDirectoryPermissionsAsync()
+        return granted
 
     }
+
+    
 
     async ensureDirExists(folder:string) {
         const dirInfo = await FileSystem.getInfoAsync(folder);
@@ -50,7 +52,6 @@ export default class DownloadManager{
         const progress = Math.round(( downloadProgress.totalBytesWritten / downloadProgress.totalBytesExpectedToWrite) * 100)
         this.storage.updateProgressDownload(progress,video_id)
 
-        console.log(progress)
         if (setState){
             setState(progress)
         }
@@ -66,7 +67,6 @@ export default class DownloadManager{
     async resumeFromDatabase(video_id:number,reference:any,setState?:any){
 
         try {
-            
             const data = await this.storage.getDownloadAny(video_id)
 
             if(data && data.length>0){
@@ -74,15 +74,18 @@ export default class DownloadManager{
                 if (row.uri){
     
                     const downloadResumable = await this.createResumable(row.url,row.uri,row.video_id,setState)
-                    reference.current=downloadResumable;
+                    if (downloadResumable){
+                        reference.current=downloadResumable;
+                        return row
+                    }
+
+                    return false
     
-                    return row
                 }
             }
         return false
 
         } catch ( error) {
-            console.log(error)
             return false
 
             
@@ -93,6 +96,8 @@ export default class DownloadManager{
 
     async createResumable(url:string,uri:string,video_id:number,setState:any){
 
+        // const result = await this.requiredPermission()
+        // if (!result){return }
 
         const downloadResumable = FileSystem.createDownloadResumable(
             url,
@@ -101,7 +106,7 @@ export default class DownloadManager{
                 headers:{
                     "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:128.0) Gecko/20100101 Firefox/128.0",
                 },
-                cache:false,
+                cache:true,
             },
             (downloadProgress)=>{this.getProgress(downloadProgress,video_id,setState)},
         );
@@ -115,7 +120,6 @@ export default class DownloadManager{
             const downloaded = await downloadResumable.downloadAsync();
 
             if (downloaded){
-                console.log(downloaded)
                 if(downloaded.status==200){
                     await this.storage.updateCompleteDownload(true,video_id)
                     await this.storage.updateStatusDownload(false,video_id)
@@ -129,7 +133,6 @@ export default class DownloadManager{
             return false
 
         } catch ( error) {
-            console.log(error)
             return false
         }
 
@@ -145,12 +148,15 @@ export default class DownloadManager{
             await this.storage.updateURIDownload(fileURI,file.video_id)
 
             const downloadResumable = await this.createResumable(file.url,fileURI,file.video_id,setState)
+            if (downloadResumable){
+                await this.storage.updateDataDownload(downloadResumable.savable(),file.video_id)
+    
+                reference.current = downloadResumable
+    
+                return  await this.checkDownload(downloadResumable,file.video_id);
 
-            await this.storage.updateDataDownload(downloadResumable.savable(),file.video_id)
+            }
 
-            reference.current = downloadResumable
-
-            return  await this.checkDownload(downloadResumable,file.video_id);
             
         } catch ( error) {
             console.log(error)
@@ -201,7 +207,6 @@ export default class DownloadManager{
             startOnBoot: true,
         });
 
-        console.log(task)
         return task
 
     }

@@ -66,16 +66,7 @@ export default function RootLayout() {
 
     }}/>
 
-    <Tabs.Screen name="profile" 
-            options={{
-              ...options,
-              title:"Perfil",
-              tabBarIcon:({focused,color,size})=>{
-                return  <Ionicons name="heart-circle-outline" size={size} color={color}/>
-
-              }
-    }}/>
-
+    
 
 
     </Tabs>
