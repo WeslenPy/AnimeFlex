@@ -199,7 +199,7 @@ const flipToBack = () => {
 
   useEffect(()=>{
     ScreenOrientation.unlockAsync();
-    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.ALL);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
     addHistory()
     getFavorite()
 

@@ -76,6 +76,7 @@ export default function FavoriteTab() {
         renderScene={renderScene}
         onIndexChange={setIndex}
         renderTabBar={renderTabBar}
+        animationEnabled={true}
         initialLayout={{ width: layout.width }}
       />
 

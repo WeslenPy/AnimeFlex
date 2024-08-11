@@ -1,17 +1,18 @@
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
+import * as ScreenOrientation from 'expo-screen-orientation';
 import { useMigrations } from 'drizzle-orm/expo-sqlite/migrator';
 import migrations from "@/drizzle/migrations";
 import { Stack } from 'expo-router/stack';
-import "../styles/global.css";
-import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { AnimeQuery } from '../controller/storage/database';
 import DownloadManager from '../controller/storage/download';
 import {useEffect} from "react";
+import "../styles/global.css";
 
 export default function Layout() {
 
+
   const context = new AnimeQuery()
-  const download = new DownloadManager()
 
   const { success, error } = useMigrations(context.db, migrations);
 
@@ -20,10 +21,15 @@ export default function Layout() {
     statusBarTranslucent:true 
   }
 
-  useDrizzleStudio(context.expoDB);
+  // useDrizzleStudio(context.expoDB);
 
   
  
+  useEffect(()=>{
+    ScreenOrientation.unlockAsync();
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
+
+  },[])
 
   return (
     

@@ -2,7 +2,7 @@
   "expo": {
     "name": "AnimeFlex",
     "slug": "animeflex",
-    "version": "1.0.0",
+    "version": "1.2.5",
     "orientation": "default",
     "icon": "./src/assets/images/icon.png",
     "scheme": "myapp",
@@ -38,7 +38,7 @@
       [
         "expo-screen-orientation",
         {
-          "initialOrientation": "ALL"
+          "initialOrientation": "PORTRAIT"
         }
       ],
       "expo-font"

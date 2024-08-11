@@ -154,9 +154,6 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
             const data = await storageDatabase.getDownloadAny(parseInt(ep.video_id))
             if (data && data.length>0){
                 const row = data[0]
-
-                console.log(row)
-
                 
                 setPause(row.pause)
                 
@@ -197,7 +194,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                         <Text className='text-white  w-44 ' numberOfLines={3} lineBreakMode='clip'>{ep.title}</Text>
                         <View className='flex-row h-full items-center p-2'>
 
-                           <DownloadOptions startDownload={startDownload} pause={pause} progress={progress} finish={finish}
+                           <DownloadOptions startDownload={startDownload} pause={pause} progress={progressDownload} finish={finish}
                                             resumeDownload={resumeDownload} pauseDownload={pauseDownload} downloading={downloading} ></DownloadOptions>
 
                         </View>

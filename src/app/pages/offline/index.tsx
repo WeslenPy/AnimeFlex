@@ -3,6 +3,7 @@ import { AnimeProps } from '@/src/interfaces/anime';
 import { useCallback, useEffect, useState } from 'react';
 import {BoxHistory} from '@/src/components/box';
 import { AnimeQuery } from '@/src/controller/storage/database';
+import HeaderList from '@/src/components/flat/header';
 
 
 
@@ -48,6 +49,7 @@ export default function Offline() {
       :<>
       
       <FlatList  
+          ListHeaderComponent={<HeaderList quantity={offline.length}></HeaderList>}
           ListFooterComponent={<View className='mb-10'></View>}
           refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
           contentContainerStyle={{gap:16,marginBottom:50}} 

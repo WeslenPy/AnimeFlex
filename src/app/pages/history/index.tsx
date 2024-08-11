@@ -3,7 +3,7 @@ import { AnimeProps } from '@/src/interfaces/anime';
 import { useCallback, useEffect, useState } from 'react';
 import {BoxHistory} from '@/src/components/box';
 import { AnimeQuery } from '@/src/controller/storage/database';
-
+import HeaderList from '@/src/components/flat/header';
 
 
 export default function History() {
@@ -47,9 +47,10 @@ export default function History() {
       :<>
       
       <FlatList  
+          ListHeaderComponent={<HeaderList quantity={history.length}></HeaderList>}
           ListFooterComponent={<View className='mb-10'></View>}
           refreshControl={  <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-          contentContainerStyle={{gap:16,marginBottom:50}} 
+          contentContainerStyle={{gap:16,marginBottom:50,position:"relative"}} 
           showsHorizontalScrollIndicator={false} keyExtractor={(item,index)=>{return index.toString()}}  
           showsVerticalScrollIndicator={true} horizontal={false} 
           data={history} renderItem={({item})=><BoxHistory anime={item} state={history} setState={setHistory} remove={false}></BoxHistory>}/>

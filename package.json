@@ -12,6 +12,7 @@
     "ios": "expo run:ios",
     "web": "expo start --web",
     "test": "jest --watchAll",
+    "migrate":"npx drizzle-kit generate",
     "lint": "expo lint"
   },
   "jest": {
