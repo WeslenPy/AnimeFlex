@@ -143,6 +143,7 @@ export default function Player() {
 
         if(result && result.length>0){
           const row = result[0]
+
           if (row.uri){
             const data:URLProps= {
               urls:[row.uri],
@@ -152,7 +153,6 @@ export default function Player() {
               title:row.title,
             }
 
-            console.log(row)
             return data
 
           }
@@ -169,8 +169,8 @@ export default function Player() {
         if (!data){
           let url = session.router_ep(id)
           let result = await session.get(url)
-          data = result[0]
-          data = manager.parse(data);
+          data = manager.parse(result);
+          console.log(data)
 
 
         }

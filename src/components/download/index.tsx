@@ -3,11 +3,21 @@ import { FontAwesome, MaterialIcons, Octicons, SimpleLineIcons } from '@expo/vec
 import { TouchableOpacity, View,StyleSheet,ActivityIndicator } from 'react-native';
 import React from 'react';
 
-export default function DownloadOptions({startDownload,resumeDownload,pauseDownload,pause,progress,downloading}:{
-                                            startDownload:any,resumeDownload:any,pauseDownload:any,
+export default function DownloadOptions({startDownload,resumeDownload,pauseDownload,pause,progress,downloading,finish}:{
+                                            startDownload:any,resumeDownload:any,pauseDownload:any,finish:boolean,
                                             pause:boolean,progress:number,downloading:boolean,
                                             }) {
     
+
+    if (finish){
+        return (
+            <View className='p-4 rounded-xl' style={{backgroundColor:"rgba(255,255,255,.1)"}}>
+                <MaterialIcons name="file-download-done" size={26} color="white" />
+                
+            </View>
+        )
+    }
+
                                                 
     if (!downloading){
         return (

@@ -25,6 +25,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
     const [file, setFile] = useState<DownloadFile>();
 
     const [downloading, setDownloading] = useState(false);
+    const [finish, setFinish] = useState(false);
     const downloadRef = useRef<DownloadResumable>();
 
     const [progress, setProgress] = useState(0);
@@ -68,11 +69,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
     async function resumeDownload(){
 
         if(resumed){
-            setResumed(false)
-            setPause(false)
-            setDownloading(true)
             return await getDownloadResumed()
-            
         }
 
         if (downloadRef.current){
@@ -91,7 +88,11 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
         const response = await  storageDownload.resumeFromDatabase(parseInt(ep.video_id),downloadRef,setProgressDownload)
         if (response){
             if (pause && downloadRef.current){
-                await downloadRef.current.pauseAsync()
+                setResumed(false)
+                setPause(false)
+                setDownloading(true)
+                await storageDatabase.updateStatusDownload(false,parseInt(ep.video_id))
+                await downloadRef.current.resumeAsync()
             }
         }
     }
@@ -154,11 +155,17 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
             if (data && data.length>0){
                 const row = data[0]
 
+                console.log(row)
+
                 
                 setPause(row.pause)
+                
                 setProgressDownload(parseInt(row.progress))
                 setDownloading(true)
                 setResumed(true)
+                setFinish(row.complete)
+                await storageDatabase.updateStatusDownload(row.pause,parseInt(ep.video_id))
+                console.log("resumed",row)
 
             }
             
@@ -190,7 +197,7 @@ export default function Epsodie({ep,page}:{ep:EpsodiesProps,page:any}) {
                         <Text className='text-white  w-44 ' numberOfLines={3} lineBreakMode='clip'>{ep.title}</Text>
                         <View className='flex-row h-full items-center p-2'>
 
-                           <DownloadOptions startDownload={startDownload} pause={pause} progress={progress}
+                           <DownloadOptions startDownload={startDownload} pause={pause} progress={progress} finish={finish}
                                             resumeDownload={resumeDownload} pauseDownload={pauseDownload} downloading={downloading} ></DownloadOptions>
 
                         </View>

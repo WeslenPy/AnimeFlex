@@ -55,6 +55,10 @@ export default class DownloadManager{
             setState(progress)
         }
 
+        if (progress>=100){
+            this.storage.updateCompleteDownload(true,video_id)
+        }
+
         return 
 
     }
@@ -114,6 +118,7 @@ export default class DownloadManager{
                 console.log(downloaded)
                 if(downloaded.status==200){
                     await this.storage.updateCompleteDownload(true,video_id)
+                    await this.storage.updateStatusDownload(false,video_id)
                     await this.storage.updateProgressDownload(100,video_id)
 
                     return true
