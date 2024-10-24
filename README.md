@@ -22,7 +22,7 @@ Este é um projeto de app para assistir animes
 <div align="center">
 <h2>Home</h2>
 
-<kbd><img src="https://github.com/user-attachments/assets/32bc1505-5a0c-4767-a8ca-c75ac370c296" ></kbd>
+<kbd><img src="https://github.com/user-attachments/assets/32bc1505-5a0c-4767-a8ca-c75ac370c296" width="300" height="auto" ></kbd>
 
 <h2>Search bar</h2>
 <kbd><img src="https://github.com/user-attachments/assets/81897061-2e89-469b-bd80-39510b553f42"></kbd>
