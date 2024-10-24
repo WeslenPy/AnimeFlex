@@ -3,7 +3,7 @@
    <h1>AnimeFlex</h1>
 </div>
 
-Este é um projeto de app para assistir animes
+Este é um projeto de app para assistir animes feito em react-native
 
 ## Get started
 
