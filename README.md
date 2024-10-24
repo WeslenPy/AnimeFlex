@@ -1,4 +1,7 @@
-# AnimeFlex
+<div align="center">
+   <img src="https://github.com/user-attachments/assets/bae6e425-847b-4412-9f40-ddbac656edee"/>
+   <h1>AnimeFlex</h1>
+</div>
 
 Este é um projeto de app para assistir animes
 
@@ -37,8 +40,7 @@ Este é um projeto de app para assistir animes
 
 <h2>Watching</h2>
 
-<kbd><img 
-src="https://github.com/user-attachments/assets/8d509660-6a07-4c38-822a-9b2856514c2d" width="300" height="auto"          ></kbd>
+<kbd><img src="https://github.com/user-attachments/assets/8d509660-6a07-4c38-822a-9b2856514c2d" width="300" height="auto"          ></kbd>
 
 <h2>Download</h2>
 
