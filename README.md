@@ -29,17 +29,17 @@ Este é um projeto de app para assistir animes
 
 <h2>Category</h2>
 
-<img src="https://github.com/user-attachments/assets/4c91c844-1d49-4631-8c5c-2993b7bbadb7">
+<kbd><img src="https://github.com/user-attachments/assets/4c91c844-1d49-4631-8c5c-2993b7bbadb7"></kbd>
 
-<h2>Favoutires</h2>
+<h2>Favourites</h2>
 
-<img src="https://github.com/user-attachments/assets/9e0cc900-88ab-4477-8bf4-e16491971858">
+<kbd><img src="https://github.com/user-attachments/assets/9e0cc900-88ab-4477-8bf4-e16491971858"></kbd>
 
 <h2>Watching</h2>
 
-<img src="https://github.com/user-attachments/assets/8d509660-6a07-4c38-822a-9b2856514c2d">
+<kbd><img src="https://github.com/user-attachments/assets/8d509660-6a07-4c38-822a-9b2856514c2d"></kbd>
 
 <h2>Download</h2>
 
-<img src="https://github.com/user-attachments/assets/12c081e5-cdef-4d3b-84bf-fdc6a61aa183">
+<kbd><img src="https://github.com/user-attachments/assets/12c081e5-cdef-4d3b-84bf-fdc6a61aa183"></kbd>
 </div>
