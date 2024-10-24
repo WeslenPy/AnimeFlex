@@ -1,5 +1,5 @@
 <div align="center">
-   <img src="https://github.com/user-attachments/assets/bae6e425-847b-4412-9f40-ddbac656edee"/>
+   <img src="https://github.com/user-attachments/assets/bae6e425-847b-4412-9f40-ddbac656edee"  width="150" height="auto" />
    <h1>AnimeFlex</h1>
 </div>
 
